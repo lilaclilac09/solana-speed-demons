@@ -1,0 +1,391 @@
+<section class="module" id="module-6" style="background: var(--color-bg)">
+  <div class="module-content">
+
+    <header class="module-header animate-in">
+      <span class="module-number">06</span>
+      <h1 class="module-title">全局视野：客户端多样性与 Solana 的未来</h1>
+      <p class="module-subtitle">三支独立团队，共享同一条链 —— 客户端多样性对 Solana 意味着什么，以及为何至关重要</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 1: The Map                                             -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">全局地图</h2>
+
+        <p class="screen-intro">
+          你已经看到
+          <span class="term" data-definition="Firedancer 是由 Jump Crypto 用 C 语言从零编写的 Solana validator。它完全独立地重新实现了整个 Solana 协议，与原始 Rust 实现没有任何共享代码。">Firedancer</span>
+          构建引擎，
+          <span class="term" data-definition="Samba 是由 Harmonic Finance 基于 Firedancer 分叉的版本，新增了 MEV 捆绑包基础设施 —— 能够接受并保证来自交易者的交易组的排序。">Samba</span>
+          对其进行
+          <span class="term" data-definition="MEV（最大可提取价值）是通过控制区块中交易顺序来获取的利润。生产每个区块的 validator 决定哪些交易进入以及排列顺序。">MEV</span>
+          改造，以及
+          <span class="term" data-definition="Delorean 是由 Temporal XYZ 构建的命令行工具，从 Penrose 获取历史交易快照并在本地重放，让开发者能够针对真实生产状态测试修复方案。">Delorean</span>
+          重放历史。以下是三者在 Solana 生态系统中的位置，以及它们揭示的技术发展方向。
+        </p>
+
+        <div class="arch-diagram animate-in">
+
+          <div class="arch-zone">
+            <h4 class="arch-zone-label">Zone 1 — The Network Layer</h4>
+            <div class="arch-component"
+                 data-desc="连接所有 validator 的点对点 Gossip 网络。交易首先在此广播，然后由 validator 接收处理。"
+                 onclick="showArchDesc(this)">
+              <div class="arch-icon">🌐</div>
+              <span>Solana P2P Network</span>
+            </div>
+          </div>
+
+          <div class="arch-zone">
+            <h4 class="arch-zone-label">Zone 2 — Validator Clients</h4>
+            <div class="arch-component"
+                 data-desc="由 Solana Labs（现为 Anza）用 Rust 编写的原始 Solana validator。承载 mainnet 的大部分 stake。是协议的参考实现。"
+                 onclick="showArchDesc(this)">
+              <div class="arch-icon">🌿</div>
+              <span>Agave (Anza)</span>
+            </div>
+            <div class="arch-component"
+                 data-desc="混合型 validator：Firedancer 网络层 + Agave 执行引擎。目前已在 mainnet 上线运行，承载 Jump Crypto 的 stake，入口性能优于 Agave。"
+                 onclick="showArchDesc(this)">
+              <div class="arch-icon">🔥</div>
+              <span>Frankendancer</span>
+            </div>
+            <div class="arch-component"
+                 data-desc="100% 用 C 语言从零构建的 validator，不含任何 Agave 代码。尚未上线 mainnet，仍在开发中。目标：完全独立。"
+                 onclick="showArchDesc(this)">
+              <div class="arch-icon">⚡</div>
+              <span>Full Firedancer</span>
+            </div>
+            <div class="arch-component"
+                 data-desc="带有 MEV 捆绑包基础设施的 Firedancer 分叉。已在 mainnet 运行，接受来自交易者的保证排序捆绑包。由 Harmonic Finance 构建和运营。"
+                 onclick="showArchDesc(this)">
+              <div class="arch-icon">🎵</div>
+              <span>Samba (Harmonic)</span>
+            </div>
+          </div>
+
+          <div class="arch-zone">
+            <h4 class="arch-zone-label">Zone 3 — Developer Tooling</h4>
+            <div class="arch-component"
+                 data-desc="一项在 validator 生产区块时捕获交易快照的服务。存储完整的历史快照：账户、程序、sysvars。目前处于 alpha 阶段。"
+                 onclick="showArchDesc(this)">
+              <div class="arch-icon">⏱️</div>
+              <span>Penrose (Temporal)</span>
+            </div>
+            <div class="arch-component"
+                 data-desc="Penrose 的参考客户端。获取历史快照，通过 SVM 在本地重放，对比执行结果。支持 --replace-program 用于测试修复方案。"
+                 onclick="showArchDesc(this)">
+              <div class="arch-icon">🚗</div>
+              <span>delorean</span>
+            </div>
+          </div>
+
+          <div class="arch-description" id="arch-desc">点击任意组件了解其功能</div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 2: Who Builds What                                     -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">谁在构建什么</h2>
+
+        <div class="icon-rows animate-in stagger-children">
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🔥</div>
+            <div>
+              <strong>Jump Crypto</strong>
+              <p>用 C 语言从零构建了 Firedancer。目前在
+                <span class="term" data-definition="Frankendancer 是混合型 validator，将 Firedancer 的高性能网络层与 Agave 的执行引擎结合在一起。目前已在 Solana mainnet 上线运行。">Frankendancer</span>
+                形式在
+                <span class="term" data-definition="Mainnet 是运行真实资产和真实交易的 Solana 生产区块链。与用于测试的 devnet 或 testnet 不同。">mainnet</span>
+                上承载 Solana 相当比例的
+                <span class="term" data-definition="Stake 是委托给 validator 的 SOL 代币数量。Stake 越多，validator 被选中生产区块的频率越高，获得的奖励也越多。同时也代表社区对该 validator 的信任程度。">stake</span>。
+                完整版 Firedancer（不含 Agave 代码）正在积极开发中。</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🎵</div>
+            <div>
+              <strong>Harmonic Finance</strong>
+              <p>将 Firedancer 分叉为 Samba，新增了
+                <span class="term" data-definition="MEV 捆绑包基础设施是指让交易者直接向 validator 提交有序交易组（捆绑包）的系统，并保证按指定顺序执行。">MEV 捆绑包基础设施</span>。
+                在 mainnet 上运营 Samba
+                <span class="term" data-definition="validator 是参与 Solana 网络的服务器，通过验证交易和生产新区块来获取奖励。">validator</span>
+                ，为需要保证交易排序的交易者服务。</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-3)">⏱️</div>
+            <div>
+              <strong>Temporal XYZ</strong>
+              <p>构建了
+                <span class="term" data-definition="Penrose 是一项数据捕获服务，与 Solana validator 并行运行，记录完整的交易快照 —— 交易被处理时每个账户、程序和 sysvar 的状态。">Penrose</span>
+                ，一个与 Solana validator 并行运行的历史交易数据服务。同时构建了 delorean 作为参考客户端。目前处于 alpha 阶段，仅供部分测试者使用。</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-5)">🌿</div>
+            <div>
+              <strong>Anza（前身为 Solana Labs）</strong>
+              <p>维护
+                <span class="term" data-definition="Agave 是用 Rust 编写的原始 Solana validator 软件，由 Solana Labs 创建，现由 Anza 维护。运行了 Solana mainnet 大多数 validator，是协议的参考实现。">Agave</span>
+                ，即原始 Solana validator。仍然运行 mainnet 上的大多数 validator。是 Firedancer 独立重新实现的
+                <span class="term" data-definition="协议参考实现是软件的权威官方版本，定义了协议应该如何运行。其他实现通过与其对比来验证正确性。">协议参考实现</span>。</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 3: Why Client Diversity Matters                        -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">为什么客户端多样性至关重要</h2>
+
+        <p class="screen-intro">
+          当全世界所有
+          <span class="term" data-definition="validator 客户端是 validator 服务器运行的软件，用于参与 Solana 网络。不同的 validator 客户端是同一 Solana 协议的独立实现，就像不同浏览器都实现同一套 Web 标准一样。">validator 客户端</span>
+          运行相同代码时，一旦代码出现漏洞会发生什么？2023 年 3 月，Agave validator 的一个漏洞导致 Solana mainnet 中断长达 4.5 小时。由于只有一个客户端，修复工作只能依赖一个团队。
+        </p>
+
+        <div class="callout callout-info animate-in">
+          <div class="callout-icon">🌐</div>
+          <div class="callout-content">
+            <strong class="callout-title">韧性方程式</strong>
+            <p>当 Firedancer 承载 mainnet 30% 以上的 stake 时，仅影响 Agave 的漏洞可能不会导致整条链停止。Firedancer validator 可以继续生产区块，同时 Agave 进行修复。这正是以太坊积极资助多个客户端团队的原因 ——
+              <span class="term" data-definition="客户端多样性是指同一区块链协议拥有多个独立实现。如果一个客户端出现漏洞，运行其他客户端的 validator 可以继续运行，防止整个网络中断。">客户端多样性</span>
+              是基础设施层面的风险保障。</p>
+          </div>
+        </div>
+
+        <p>
+          客户端多样性还能发现
+          <span class="term" data-definition="协议歧义是指区块链协议的正式规范不清晰或不完整 —— 导致不同实现对其有不同解读。客户端之间的分歧暴露了这些模糊之处。">协议歧义</span>。
+          当 Firedancer 和 Agave 对某笔交易的结果产生分歧时，这不是问题 —— 而是信号。其中一个存在漏洞，而分歧让你清楚地知道该深入排查哪种行为。
+        </p>
+
+        <div class="badge-list animate-in">
+          <div class="badge-item">
+            <code class="badge-code">单客户端网络</code>
+            <span class="badge-desc">代码库中的一个漏洞就能导致整条链停止。所有 validator 同时失效。</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">双客户端网络（当前）</code>
+            <span class="badge-desc">一个客户端的漏洞只影响运行该客户端的 validator。链可能继续生产区块。</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">三客户端网络（目标）</code>
+            <span class="badge-desc">韧性成倍提升。
+              <span class="term" data-definition="拜占庭容错（BFT）是指系统在部分参与者行为不正确或具有恶意时仍能正常运行的能力。得名于计算机科学中的拜占庭将军问题。">拜占庭容错</span>
+              能力显著增强。</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 4: Drag and Drop — Match the Tool                      -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">工具匹配</h2>
+
+        <p class="screen-intro">
+          将每个工具拖放到最符合其在 Solana 生态系统中功能的描述框中。
+        </p>
+
+        <div class="dnd-container" id="dnd-module6">
+          <div class="dnd-chips">
+            <div class="dnd-chip" draggable="true" data-answer="delorean">delorean（回放工具）</div>
+            <div class="dnd-chip" draggable="true" data-answer="samba">Samba（MEV验证器）</div>
+            <div class="dnd-chip" draggable="true" data-answer="firedancer">Firedancer（C语言验证器）</div>
+            <div class="dnd-chip" draggable="true" data-answer="penrose">Penrose（数据服务）</div>
+          </div>
+          <div class="dnd-zones">
+            <div class="dnd-zone" data-correct="delorean">
+              <p class="dnd-zone-label">回放历史交易以调试
+                <span class="term" data-definition="智能合约（在 Solana 上称为"程序"）是部署到区块链上的代码，触发时自动执行。它在每个 validator 上运行，给定相同输入产生确定性结果。">智能合约</span>
+                失败</p>
+              <div class="dnd-zone-target">拖放至此</div>
+            </div>
+            <div class="dnd-zone" data-correct="samba">
+              <p class="dnd-zone-label">为验证器添加MEV捆绑包排序，运行接受来自 MEV 交易者保证排序
+                <span class="term" data-definition="捆绑包是一组一起提交的交易，保证按特定顺序原子性执行 —— 要么全部按顺序成功，要么全部不执行。">捆绑包</span>
+                的 validator</p>
+              <div class="dnd-zone-target">拖放至此</div>
+            </div>
+            <div class="dnd-zone" data-correct="firedancer">
+              <p class="dnd-zone-label">从零运行高性能Solana验证节点，不含任何 Agave 代码</p>
+              <div class="dnd-zone-target">拖放至此</div>
+            </div>
+            <div class="dnd-zone" data-correct="penrose">
+              <p class="dnd-zone-label">从链上捕获并提供交易快照，在 Solana 区块生产时捕获并提供完整交易快照</p>
+              <div class="dnd-zone-target">拖放至此</div>
+            </div>
+          </div>
+          <button class="quiz-check-btn" onclick="checkDnD('dnd-module6')">检查匹配结果</button>
+          <button class="quiz-reset-btn" onclick="resetDnD('dnd-module6')">重置</button>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 5: What to Watch Next                                  -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">接下来值得关注的内容</h2>
+
+        <p class="screen-intro">
+          这三个项目都在快速推进。以下是追踪进展的渠道。
+        </p>
+
+        <div class="pattern-cards animate-in stagger-children">
+
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🔥</div>
+            <h4 class="pattern-title">Firedancer</h4>
+            <p class="pattern-desc">
+              <code>github.com/firedancer-io/firedancer</code> — 关注完整版 Firedancer 的
+              <span class="term" data-definition="Mainnet 上线是指将软件部署到运行真实资产的生产区块链。对于 Firedancer 而言，这意味着在真实 Solana 网络上运行完整的从零构建 validator（不含 Agave 代码）。">mainnet 上线</span>。
+              重点关注 <code>choreo/</code>（consensus）和 <code>flamenco/</code>（execution）目录中的重大变化。
+            </p>
+          </div>
+
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🎵</div>
+            <h4 class="pattern-title">Samba</h4>
+            <p class="pattern-desc">
+              <code>github.com/harmonic/samba</code> — 关注 <code>pack/</code> 和 <code>sender/</code>
+              <span class="term" data-definition="tile 是 Firedancer/Samba 中的隔离处理单元 —— 一个单线程 worker，拥有专用的 CPU 核心、内存区域和角色。各 tile 仅通过共享内存环形队列通信，不直接相互调用。">tiles</span>
+              中 MEV 基础设施的演进。对比 rebase 记录以追踪 Harmonic 与上游 Firedancer 的分歧情况。
+            </p>
+          </div>
+
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">⏱️</div>
+            <h4 class="pattern-title">Delorean</h4>
+            <p class="pattern-desc">
+              <code>github.com/temporalxyz/delorean-client</code> — 关注 Penrose 退出 alpha 阶段的进展。随着更多 validator 运行捕获服务，
+              <span class="term" data-definition="快照格式定义了捕获交易完整状态快照的数据文件结构 —— 包括重现精确执行环境所需的每个账户、程序二进制文件和系统变量。">快照格式</span>
+              （<code>penrose-types</code>）将变得更加稳定。
+            </p>
+          </div>
+
+        </div>
+
+        <div class="callout callout-accent animate-in">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">更宏观的规律</strong>
+            <p>这三个项目代表着一件重要的事：Solana 生态系统已经足够成熟，多个独立团队正在从零构建基础设施。这是一个
+              <span class="term" data-definition="协议规范是正式技术文档，精确定义了区块链应如何运行 —— 发送什么消息、如何验证交易、如何达成 consensus。多个客户端团队以此作为共同的参考依据。">协议</span>
+              值得押注的标志。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 6: Quiz                                                -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">最终测验</h2>
+
+        <p class="screen-intro">
+          三道场景题，巩固你在本课程中所学的内容。
+        </p>
+
+        <div class="quiz-container" id="quiz-module6">
+
+          <!-- Q1 -->
+          <div class="quiz-question-block"
+               data-correct="option-b"
+               data-explanation-right="正确 —— 带 --replace-program 参数的 delorean 正是为此而生：获取该交易的历史状态并用你的新程序字节码重放。你可以使用真实的生产状态，在离线环境中安全测试。"
+               data-explanation-wrong="从 Agave 快照重放需要运行完整 validator 并找到正确的快照。Samba 没有测试标志。带 --replace-program 参数的 delorean 才是精准的工具。">
+            <h3 class="quiz-question">你正在构建一个新的 Solana 程序，想针对竞争对手协议曾经失败的某笔历史交易进行测试。你已准备好编译后的
+              <span class="term" data-definition="ELF（可执行与可链接格式）文件是 Solana 程序编译后的二进制文件。当你用 Rust 编写 Solana 智能合约时，编译器会生成一个 .so ELF 文件，部署到链上并由 SVM 执行。">ELF</span>
+              文件。哪个命令能实现这个能力？</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>运行本地 Agave validator 并从快照重放该区块</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span><code>delorean &lt;signature&gt; &lt;penrose-url&gt; --replace-program=&lt;addr&gt;:&lt;your-fix.so&gt;</code></span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>向 Samba 提交带 <code>--test</code> 标志的交易</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-block"
+               data-correct="option-c"
+               data-explanation-right="正确 —— 排序保证必须来自实际决定哪些交易进入区块及其顺序的实体。那就是 validator 的 pack tile。应用层方案只能请求排序，无法保证。"
+               data-explanation-wrong="智能合约在排序决定之后才执行。RPC 节点转发请求但不生产区块。只有 validator 本身 —— 具体来说是 pack tile —— 才有权力保证交易排序。">
+            <h3 class="quiz-question">一家大型 MEV 公司希望保证其
+              <span class="term" data-definition="套利交易利用不同市场之间的价差获利。在 Solana 上，成功的套利需要你的交易在恰当时机落链 —— 在大额价格影响交换之后，竞争对手反应之前。">套利</span>
+              捆绑包在 Solana mainnet 上按特定顺序落链。哪个架构层必须支持这种保证？</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>在应用层 —— 智能合约可以强制执行排序</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>在
+                  <span class="term" data-definition="RPC（远程过程调用）节点是接受应用请求的 Solana 服务器 —— 例如钱包查询余额或提交交易。RPC 节点将交易转发给 validator，但自身不生产区块。">RPC</span>
+                  层 —— 节点可以优先处理某些请求</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>在 validator/pack tile 层 —— 只有区块生产者才能保证排序</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-block"
+               data-correct="option-c"
+               data-explanation-right="完全正确 —— 这是客户端多样性最有价值的产出。分歧不是危机，而是信号。某个实现存在漏洞，正在悄悄地扭曲其对链的认知。两个团队展开调查，发现差异，协议规范得到澄清。"
+               data-explanation-wrong="没有哪个实现仅凭更新或更旧就自动正确。Solana 协议规范才是权威 —— 当两个实现产生分歧时，需要追溯到规范来找出哪个偏离了。">
+            <h3 class="quiz-question">Firedancer 报告一笔交易有效；Agave 报告该交易失败。Solana 生态系统应该如何处理这一信息？</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>相信 Firedancer，因为它更新、性能更好</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>相信 Agave，因为它是参考实现</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>调查两个实现 —— 其中一个存在
+                  <span class="term" data-definition="协议漏洞是指 validator 客户端在实现 Solana 规范时出现的错误。它可能导致客户端接受无效交易、拒绝有效交易，或计算出与其他客户端不同的结果 —— 悄悄地偏离网络其他部分。">协议漏洞</span>
+                  ，而这种分歧正好揭示了它</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module6')">检查答案</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module6')">再试一次</button>
+
+        </div>
+      </section>
+
+    </div><!-- /.module-body -->
+  </div><!-- /.module-content -->
+</section>

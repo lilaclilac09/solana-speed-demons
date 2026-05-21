@@ -1,0 +1,353 @@
+<section class="module" id="module-4" style="background: var(--color-bg)">
+  <div class="module-content">
+
+    <header class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">Samba — 网线速度下的 MEV</h1>
+      <p class="module-subtitle">Harmonic Finance 如何修改 Firedancer，在验证节点层面实现有保证的交易排序</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 1: What Is MEV?                                        -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">什么是 MEV？</h2>
+
+        <p class="screen-intro">
+          交易排序中隐藏着利润。如果你能保证自己的
+          <span class="term" data-definition="套利是指利用不同市场之间的价格差异获利——在某个交易所低价买入，立即在另一个交易所高价卖出，从中赚取差价。在区块链上，这可以在同一个区块内完成。">套利</span>
+          交易恰好落在一笔大额价格冲击交换之<em>后</em>、其他人做出反应之<em>前</em>，那这个价差就归你所有。这就是
+          <span class="term" data-definition="MEV 即最大可提取价值——通过控制区块内交易顺序所能获取的额外利润。任何能够影响排序的参与方（例如 validator）都可以捕获这部分价值。">MEV</span>
+          — Maximum Extractable Value。
+        </p>
+
+        <p>
+          MEV 并非漏洞或攻击——它是任何由单一参与方（即
+          <span class="term" data-definition="出块者是当前负责收集交易并将其写入区块的 validator。在 Solana 上，这个角色每 400 毫秒轮换一次，由新的"leader" validator 担任。">出块者</span>
+          ）决定交易顺序的区块链上客观存在的经济现实。在 Solana 上，每个区块的生产 validator 决定哪些交易进入区块以及进入的顺序。
+        </p>
+
+        <div class="pattern-cards animate-in stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🔄</div>
+            <h4 class="pattern-title">套利</h4>
+            <p class="pattern-desc">在
+              <span class="term" data-definition="DEX（去中心化交易所）是运行在区块链上的交易平台——没有公司托管你的资金。Jupiter、Raydium 和 Orca 是 Solana 上流行的 DEX。">DEX</span>
+              A 以低价买入代币，在同一区块内、价格均衡之前，在 DEX B 以高价卖出。</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🥪</div>
+            <h4 class="pattern-title">三明治攻击</h4>
+            <p class="pattern-desc">在大额交换之前插入买单（
+              <span class="term" data-definition="抢先交易是指在已知待处理交易之前插入自己的交易，以从该交易将引发的价格波动中获利。就像在市场上听到有人要扫货后，抢先排到队伍前面。">抢先交易</span>
+              ），等大额交换推动价格上涨后立即卖出。那笔大额交换就是三明治的"馅料"。</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">💧</div>
+            <h4 class="pattern-title">清算</h4>
+            <p class="pattern-desc">当借款人的抵押品价值跌破阈值时，争先成为第一个
+              <span class="term" data-definition="清算发生在借款人的抵押品价值低于要求比例时。清算人偿还贷款并获得奖励——但只有第一个成功提交交易的人才能拿到奖励。">清算人</span>
+              并领取奖励。</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">📦</div>
+            <h4 class="pattern-title">捆绑包</h4>
+            <p class="pattern-desc">一组交易以
+              <span class="term" data-definition="原子性意味着全有或全无：捆绑包中的每一笔交易要么全部按指定顺序成功执行，要么全部不执行。就像银行转账——只有双方都完成时才算成功。">原子方式</span>
+              保证按特定顺序落块——否则全部失败。用于安全地实施上述各类策略。</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info animate-in">
+          <div class="callout-icon">ℹ️</div>
+          <div class="callout-content">
+            <strong class="callout-title">MEV 本身是中性的</strong>
+            <p>MEV 可以提升市场效率（套利），也可以从普通用户身上提取价值（三明治攻击）。关键在于 validator 层面是否使这些保证成为可能。Samba 让这一切成为现实。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 2: From Firedancer to Samba                           -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">从 Firedancer 到 Samba</h2>
+
+        <p>
+          Samba 是
+          <span class="term" data-definition="代码 fork 是指一个团队复制整个现有开源项目的代码库，并开始向新的方向开发。Fork 共享原始历史记录，但从该节点起独立演进。">fork</span>
+          自
+          <span class="term" data-definition="Firedancer 是 Jump Crypto 用 C 语言从头重写的高性能 Solana validator，目标是每秒处理 100 万笔交易，也是 Samba 的构建基础。">Firedancer</span>
+          的——Harmonic Finance 在 Jump Crypto 的 validator 之上叠加了 MEV bundle 基础设施。下方的 git log 展示了 Samba 与 Firedancer 分叉的关键提交记录。
+        </p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">GIT LOG</span>
+            <pre><code>
+<span class="code-line"><span class="code-function">6f2068da5</span> <span class="code-string">v3.1.14 rebase</span></span>
+<span class="code-line"><span class="code-function">534cf9efb</span> <span class="code-string">fix harmonic buffer + cleanup arrival_ns</span></span>
+<span class="code-line"><span class="code-function">2dce39b7d</span> <span class="code-string">reduce buffer time</span></span>
+<span class="code-line"><span class="code-function">943729e15</span> <span class="code-string">pack: fix harmonic rejection condition</span></span>
+<span class="code-line"><span class="code-function">3b8614b6b</span> <span class="code-string">bundle: fix reset submit_leader_window_info_wait</span></span>
+<span class="code-line"><span class="code-function">15156b7d1</span> <span class="code-string">initial streaming impl</span></span>
+<span class="code-line"><span class="code-function">5dd65de1a</span> <span class="code-string">only append if not upcoming leader</span></span>
+<span class="code-line"><span class="code-function">f6db98e2a</span> <span class="code-string">fix: account for block txns in bundle/txn insert</span></span>
+<span class="code-line"><span class="code-function">21cf12dec</span> <span class="code-string">harmonic fd client id</span></span>
+            </code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">中文释义</span>
+            <div class="translation-lines">
+              <p class="tl"><strong>v3.1.14 rebase</strong> = Harmonic 定期将最新的 Firedancer
+                <span class="term" data-definition="git rebase 是将你的修改重新应用到另一个分支最新版本之上的操作。Samba 对 Firedancer 主分支进行 rebase，从而自动继承性能提升和安全改进。">rebase</span>
+                更新同步过来，使 Samba 始终跟上最新的性能改进。</p>
+              <p class="tl"><strong>harmonic buffer</strong> = Samba 新增了一个内部队列，在 bundle 到达
+                <span class="term" data-definition="pack tile 是 Firedancer（以及 Samba）内部负责选择哪些交易进入区块、以何种顺序排列的组件，是调度逻辑的核心。">pack tile</span>
+                之前先暂存进来。同时清理用于排序的 <em>arrival_ns</em> 时间戳。</p>
+              <p class="tl"><strong>reduce buffer time</strong> = 调整 bundle 在队列中等待的时长——等待时间过长会导致区块生产完毕前没来得及将其纳入。</p>
+              <p class="tl"><strong>pack: fix harmonic rejection condition</strong> = 精确定义何时拒绝一个 bundle：它能否放入剩余区块空间？目标 slot 是否距当前太远？</p>
+              <p class="tl"><strong>bundle: fix reset submit_leader_window_info_wait</strong> = bundle 只能在该 validator 即将成为
+                <span class="term" data-definition="在 Solana 上，leader 是轮到其生产下一个区块的 validator。Leader 身份按提前公布的时间表每 400ms 轮换一次。">leader</span>
+                （出块者）时才能提交。此提交修复了该检查的时间窗口逻辑。</p>
+              <p class="tl"><strong>initial streaming impl</strong> = bundle 现在可以以实时流的方式提交，而非仅支持批量提交。这降低了每一毫秒都至关重要的高频交易者的延迟。</p>
+              <p class="tl"><strong>only append if not upcoming leader</strong> = 如果该节点即将不是出块者，则不再向队列追加 bundle——避免在无法使用的工作上浪费处理资源。</p>
+              <p class="tl"><strong>account for block txns in bundle/txn insert</strong> = 在选择 bundle 时，将区块中已选定的普通交易计入剩余空间的计算，确保数据准确。</p>
+              <p class="tl"><strong>harmonic fd client id</strong> = Samba 在网络上以独特标识符公告自身，让生态系统知道该节点支持
+                <span class="term" data-definition="上游（upstream）在开源语境中指 fork 所派生的原始项目。Samba 的上游是 Firedancer——它会定期拉取 Firedancer 的变更以保持同步。">bundle</span>
+                提交。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 3: The Bundle Pipeline                                 -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Bundle 管道：群聊模拟</h2>
+
+        <p>
+          一个
+          <span class="term" data-definition="bundle 是一组一起提交的交易，并附带保证：它们要么全部按指定顺序落块，要么全部不执行。这种原子性使 MEV 策略变得可靠。">bundle</span>
+          在落块之前需要经过多个组件。请跟随下方对话，了解 Samba 如何将一个包含两笔交易的套利 bundle 从提交处理到确认。
+        </p>
+
+        <div class="chat-window animate-in" id="chat-module4">
+          <div class="chat-messages">
+
+            <!-- msg 0: Trader submits bundle -->
+            <div class="chat-message" data-msg="0" data-sender="trader" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">T</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-4)">交易者</span>
+                <p>发送 bundle：[交易：在 DEX A 买入 SOL] 然后 [交易：在 DEX B 卖出 SOL]。这两笔交易必须按顺序执行，否则全部失败。</p>
+              </div>
+            </div>
+
+            <!-- msg 1: Harmonic API checks leader status -->
+            <div class="chat-message" data-msg="1" data-sender="harmonic-api" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">Harmonic API</span>
+                <p>已收到 bundle。正在检查我们是否将成为即将到来的
+                  <span class="term" data-definition="slot 是 Solana 的基本时间单位——一个 400 毫秒的窗口，在此期间，一个指定的 validator（leader）必须收集交易并产生区块。">slot</span>
+                  的 leader……</p>
+              </div>
+            </div>
+
+            <!-- msg 2: Harmonic API confirms leader slot -->
+            <div class="chat-message" data-msg="2" data-sender="harmonic-api" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">Harmonic API</span>
+                <p>我们将在 slot 420195500（约 800ms 后）成为 leader。正在将 bundle 转发给 Samba Pack tile。</p>
+              </div>
+            </div>
+
+            <!-- msg 3: Samba pack queues the bundle -->
+            <div class="chat-message" data-msg="3" data-sender="samba-pack" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">Samba Pack</span>
+                <p>bundle 已入队。为买入交易预留 slot N，为卖出交易预留 slot N+1。这两个位置现已锁定。</p>
+              </div>
+            </div>
+
+            <!-- msg 4: Samba pack fills remaining slots -->
+            <div class="chat-message" data-msg="4" data-sender="samba-pack" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">Samba Pack</span>
+                <p>正在按手续费优先级填充剩余 2,398 个区块位置……</p>
+              </div>
+            </div>
+
+            <!-- msg 5: Samba pack reports block complete -->
+            <div class="chat-message" data-msg="5" data-sender="samba-pack" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">Samba Pack</span>
+                <p>区块打包完毕。bundle 占据前 2 个位置，其余交易依次排列。</p>
+              </div>
+            </div>
+
+            <!-- msg 6: Trader confirms profit -->
+            <div class="chat-message" data-msg="6" data-sender="trader" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">T</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-4)">交易者</span>
+                <p>两笔交易已按顺序确认。套利成功：+0.04 SOL。</p>
+              </div>
+            </div>
+
+          </div><!-- /.chat-messages -->
+
+          <div class="chat-typing" style="display:none">
+            <div class="chat-avatar" id="chat-module4-typing-avatar">?</div>
+            <div class="chat-typing-dots">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">下一条消息</button>
+            <button class="btn chat-all-btn">全部播放</button>
+            <button class="btn chat-reset-btn">重新播放</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div><!-- /.chat-window -->
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 4: Why Modify the Validator?                          -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">为什么要修改 Validator？</h2>
+
+        <p>
+          为何不在应用层构建 MEV 工具——就像 Solana 上现有的解决方案那样？因为应用层的解决方案只能<em>请求</em>排序，只有 validator 本身才能<em>保证</em>排序。
+        </p>
+
+        <div class="callout callout-accent animate-in">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Validator 是唯一的真相来源</strong>
+            <p>通过外部服务提交的 bundle，如果 validator 不明确遵守，仍可能被
+              <span class="term" data-definition="抢先交易是指在已知待处理交易落块之前插入自己的交易。外部 MEV 服务只能请求排序，而 validator 拥有最终决定权。">抢先交易</span>
+              。Samba 将 bundle 保证直接内嵌到
+              <span class="term" data-definition="pack tile 是 Firedancer 内部决定哪些交易进入区块以及以何种顺序排列的组件。Samba 直接修改此 tile，使 bundle 排序在源头得到强制执行。">pack tile</span>
+              本身，让排序由出块者在密码学层面予以保证。</p>
+          </div>
+        </div>
+
+        <p>
+          以下是 Samba 与 Solana 上其他 MEV 排序方案的对比：
+        </p>
+
+        <div class="badge-list animate-in">
+          <div class="badge-item">
+            <code class="badge-code">Samba bundle</code>
+            <span class="badge-desc">在 validator 层面保证——pack tile 在调度任何其他交易之前先为 bundle 锁定位置</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">Jito（应用层）</code>
+            <span class="badge-desc">Validator 小费激励排序，但并非密码学锁定——恶意 validator 仍可重新排序</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">普通优先手续费</code>
+            <span class="badge-desc">较高手续费可提高落块概率，但无法保证任何事——支付相同手续费的另一笔交易仍可能先行落块</span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 5: Quiz                                               -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">检验你的理解</h2>
+
+        <div class="quiz-container animate-in" id="quiz-module4">
+
+          <!-- Q1 -->
+          <div class="quiz-question-block"
+               data-correct="option-b"
+               data-explanation-right="正确——bundle 具有原子性，即全有或全无。部分纳入会破坏使 bundle 有价值的排序保证。如果区块无法容纳全部 3 笔交易，整个 bundle 将在该 slot 被拒绝。"
+               data-explanation-wrong="拆分 bundle 会摧毁其核心价值主张——有保证的有序执行。一个执行了一半的三明治攻击毫无意义。Samba 会拒绝整个 bundle，让其在下一个 slot 重试。">
+            <h3 class="quiz-question">一个 bundle 包含 3 笔交易。区块即将满载，仅剩 2 个空闲位置。Samba 会怎么做？</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>纳入 bundle 中的前 2 笔交易，丢弃第 3 笔</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>拒绝整个 bundle——bundle 具有原子性</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>暂存 bundle，等到下一个有足够空间的区块再处理</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-block"
+               data-correct="option-b"
+               data-explanation-right="正确——通过紧跟 Firedancer 上游，Samba 可以自动继承 Jump Crypto 工作成果中的性能提升、错误修复和协议更新。这是经典的开源 fork 策略。"
+               data-explanation-wrong="与 Agave 的兼容性由协议层处理，而非 rebase。bundle 提交是 Samba 专有功能，不适用于其他 validator。rebase 纯粹是关于代码质量的。">
+            <h3 class="quiz-question">Samba 定期将最新的 Firedancer 提交进行 rebase（例如"v3.1.14 rebase"）。这样做的主要好处是什么？</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>确保 Samba validator 与 Agave（Rust validator）保持兼容</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Samba 可以免费获得 Firedancer 的性能提升和安全修复</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>允许 Samba 向其他 Firedancer validator 提交 bundle</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-block"
+               data-correct="option-b"
+               data-explanation-right="正确——Samba 向下兼容。bundle 占据预留位置，其余区块位置按手续费优先级填充普通交易，与标准 validator 完全一致。"
+               data-explanation-wrong="Samba 不会拒绝普通交易——那样会使其无法作为 validator 运行。而且普通交易不会获得 bundle 保证——那是为 bundle 提交者提供的付费服务。">
+            <h3 class="quiz-question">一位普通用户（非 bundle 提交者）向 Samba validator 发送一笔高手续费交易。会发生什么？</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>该交易被拒绝，因为 Samba 只处理 bundle</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>该交易按手续费竞争剩余区块空间，与 bundle 共同竞争</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>该交易进入 bundle 队列，等待排序保证</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module4')">检查答案</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module4')">重新作答</button>
+        </div>
+      </section>
+
+    </div><!-- /.module-body -->
+  </div><!-- /.module-content -->
+</section>

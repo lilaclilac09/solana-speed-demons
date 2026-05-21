@@ -1,0 +1,265 @@
+<section class="module" id="module-1" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+
+    <header class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">验证节点：区块链的发动机</h1>
+      <p class="module-subtitle">Solana 的核心是什么——以及三支团队如何竞相让它变得更快</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 1: What Is a Validator?                               -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">什么是 Validator？</h2>
+
+        <p class="screen-intro">
+          每一笔 Jupiter 兑换、每一次 NFT 铸造、每一次 DeFi 清算——所有这些都要经过一台叫做
+          <span class="term" data-definition="Validator 是参与 Solana 网络的计算机，负责接收交易、执行交易，并将结果写入区块链。可以把它想象成让每笔交易正式生效的可信裁判。">validator</span>
+          的机器。Validator 接收来自所有用户的<em>全部</em>
+          <span class="term" data-definition="交易是发送到区块链的签名指令——比如"用 10 USDC 换 SOL"或"把这个 NFT 转到那个钱包"。只有在 validator 处理之后，交易才会永久生效。">transactions</span>，
+          对它们排序、执行，并将结果写入链上。
+          每 400 毫秒执行一次。
+        </p>
+
+        <p>
+          这 400ms 的窗口叫做
+          <span class="term" data-definition="Slot 是 Solana 的时间单位——每 400 毫秒一个间隔，由一个指定的"领导者" validator 收集交易并产出区块。错过 slot，该区块就会被跳过。">slot</span>。
+          在每个 slot 中，一个被指定的领导者必须收集数千笔交易、验证每一个密码学签名、执行所有程序，并写出一个
+          <span class="term" data-definition="Block 是在单个 slot 内提交到区块链的一批交易。每个区块都链接到前一个区块，形成让历史记录防篡改的链条。">block</span>
+          ——然后下一个 slot 就开始了。下面展示这段旅程的全貌：
+        </p>
+
+        <div class="flow-animation animate-in" data-steps="[
+          {&quot;highlight&quot;:&quot;flow-actor-1&quot;,&quot;label&quot;:&quot;你在钱包中签署一笔交易（Jupiter、Phantom 等）&quot;},
+          {&quot;highlight&quot;:&quot;flow-actor-2&quot;,&quot;label&quot;:&quot;你的交易广播到数百个 Solana 节点&quot;,&quot;packet&quot;:true,&quot;from&quot;:&quot;actor-1&quot;,&quot;to&quot;:&quot;actor-2&quot;},
+          {&quot;highlight&quot;:&quot;flow-actor-3&quot;,&quot;label&quot;:&quot;当前领导者 validator 收到该交易&quot;,&quot;packet&quot;:true,&quot;from&quot;:&quot;actor-2&quot;,&quot;to&quot;:&quot;actor-3&quot;},
+          {&quot;highlight&quot;:&quot;flow-actor-3&quot;,&quot;label&quot;:&quot;Validator 验证、排序并执行你的交易&quot;},
+          {&quot;highlight&quot;:&quot;flow-actor-4&quot;,&quot;label&quot;:&quot;结果写入当前 block&quot;,&quot;packet&quot;:true,&quot;from&quot;:&quot;actor-3&quot;,&quot;to&quot;:&quot;actor-4&quot;},
+          {&quot;highlight&quot;:&quot;flow-actor-5&quot;,&quot;label&quot;:&quot;Block 已确认。你的兑换已最终结算。&quot;,&quot;packet&quot;:true,&quot;from&quot;:&quot;actor-4&quot;,&quot;to&quot;:&quot;actor-5&quot;}
+        ]">
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-actor-1">
+              <div class="flow-actor-icon">👛</div>
+              <span>你的钱包</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-2">
+              <div class="flow-actor-icon">🌐</div>
+              <span>P2P 网络</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-3">
+              <div class="flow-actor-icon">⚙️</div>
+              <span>Validator</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-4">
+              <div class="flow-actor-icon">📦</div>
+              <span>Block</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-5">
+              <div class="flow-actor-icon">⛓️</div>
+              <span>Solana 链</span>
+            </div>
+          </div>
+
+          <div class="flow-packet" id="flow-packet"></div>
+
+          <div class="flow-step-label" id="flow-label">点击"下一步"追踪一笔交易</div>
+
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">下一步</button>
+            <button class="btn flow-reset-btn">重新开始</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-info animate-in">
+          <div class="callout-icon">⚡</div>
+          <div class="callout-content">
+            <strong class="callout-title">规模有多大</strong>
+            <p>Solana 的目标是每秒约 5,000 笔交易。这意味着 validator 必须大约每 0.2 毫秒处理一笔交易——比相机快门眨眼还快。这正是为什么 validator 工程与普通 Web 开发截然不同。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 2: The Three Projects                                 -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">三大项目</h2>
+
+        <p>
+          Solana 最初只有一个
+          <span class="term" data-definition="Validator client 是运行 Solana validator 节点的软件——接收交易、执行交易并参与共识的程序。多个独立实现可以运行相同协议，就像 Chrome 和 Firefox 都能浏览网页一样。">validator client</span>：
+          Agave（前身为 Solana Labs）。三支团队审视这一现状后，认为现有方案还不够好。
+        </p>
+
+        <div class="pattern-cards animate-in stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🔥</div>
+            <h4 class="pattern-title">Firedancer</h4>
+            <p class="pattern-desc">Jump Crypto 用 C 语言从零重建了整个 validator，目标是每秒 100 万笔交易——这是完整 Solana 协议的第二个独立实现。</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🎵</div>
+            <h4 class="pattern-title">Samba</h4>
+            <p class="pattern-desc">Harmonic Finance 在 Firedancer 基础上分叉，并加入了
+              <span class="term" data-definition="MEV 是最大可提取价值（Maximal Extractable Value）的缩写——validator 和机器人可以通过控制交易顺序来获取额外利润。例如，一笔推动价格的兑换，可以被率先看到它的人抢先交易。">MEV</span>
+              捆绑基础设施——为支付优先费用的交易者提供有保障的交易排序。</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">⏱️</div>
+            <h4 class="pattern-title">Delorean</h4>
+            <p class="pattern-desc">Temporal XYZ 构建了一项服务，将每笔交易捕获为可回放的快照，让你能够调试历史——精确回放任意一笔链上交易。</p>
+          </div>
+        </div>
+
+        <div class="callout callout-accent animate-in">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">为什么需要多个实现？</strong>
+            <p>当两个独立代码库运行同一协议时，漏洞会以分歧的形式浮出水面，而不是悄无声息地破坏数据。工程师称之为
+              <span class="term" data-definition="共识多样性（Consensus diversity）是指多个独立的软件实现都遵循相同的区块链规则。如果其中一个存在漏洞，其他实现会将其揪出——就像驾驶舱里的两名飞行员可以互相纠错一样。">"consensus diversity"</span>
+              ——这是区块链所能拥有的最重要的安全属性之一。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 3: Reading the Output                                 -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">读懂输出结果</h2>
+
+        <p>
+          下面是
+          <span class="term" data-definition="Delorean 是 Temporal XYZ 开发的工具，能捕获 Solana 交易的完整历史快照——包括每个账户、每个程序、每个标志——让你可以在本地回放并调试哪里出了问题。">Delorean</span>
+          回放一笔交易时的输出内容。每一行都传达了特定信息。请对照左侧终端输出和右侧通俗解释阅读。
+        </p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">终端输出</span>
+            <pre><code>
+<span class="code-line"><span class="code-comment">fetching fixture for WRM4dvtB32k...</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-operator">--- fixture ---</span></span>
+<span class="code-line">  <span class="code-property">slot</span>            : <span class="code-number">420195494</span></span>
+<span class="code-line">  <span class="code-property">enabled features</span>: <span class="code-number">221</span></span>
+<span class="code-line">  <span class="code-property">pre-accounts</span>    : <span class="code-number">25</span></span>
+<span class="code-line">  <span class="code-property">post-accounts</span>   : <span class="code-number">25</span></span>
+<span class="code-line">  <span class="code-property">expected CUs</span>    : <span class="code-number">104291</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-operator">--- replay outcome ---</span></span>
+<span class="code-line">  <span class="code-property">status</span>          : <span class="code-string">MATCH</span></span>
+<span class="code-line">  <span class="code-property">CUs</span>             : <span class="code-string">MATCH</span></span>
+<span class="code-line">  <span class="code-property">post-state</span>      : <span class="code-string">MATCH</span></span>
+            </code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">通俗解释</span>
+            <div class="translation-lines">
+              <p class="tl">正在连接 Temporal 的 Penrose 服务，并根据交易 ID 请求该
+                <span class="term" data-definition="Fixture 是一个完整的保存快照，包含重现某次计算所需的一切——历史上某一特定时刻的所有输入账户、功能标志和程序状态。">fixture</span>
+                的历史快照。</p>
+              <p class="tl"><strong>slot 420195494</strong> = 这笔交易发生在第 4.2 亿个区块。Solana 每年约产生 1.6 亿个区块，因此这是一笔近期交易。</p>
+              <p class="tl"><strong>enabled features: 221</strong> = Solana 有数百个随时间激活的协议开关；
+                这里记录的是该交易执行时刻哪些开关处于激活状态。</p>
+              <p class="tl"><strong>pre-accounts: 25</strong> = 交易执行前读取了 25 个钱包和程序账户——这些是输入数据。</p>
+              <p class="tl"><strong>expected CUs: 104,291</strong> = 原始
+                <span class="term" data-definition="Compute unit（CU，计算单元）是 Solana 衡量计算工作量的单位——就像交易消耗的"卡路里"。每条指令都要花费 CU，每笔交易都有最大预算。超出限制会导致交易失败。">CU</span>
+                计数来自最初的 validator 运行。本地回放必须与此完全一致。</p>
+              <p class="tl"><strong>三项全部 MATCH</strong> = 使用
+                <span class="term" data-definition="SVM（Solana Virtual Machine，Solana 虚拟机）是运行 Solana 程序的执行引擎，相当于以太坊上的 EVM——每个智能合约都在其中运行的核心机器。">SVM</span>
+                进行的本地回放与原始 validator 产生了完全相同的结果。快照完美无误。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 4: Quiz                                               -->
+      <!-- ============================================================ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">检测你的理解</h2>
+
+        <div class="quiz-container animate-in" id="quiz-module1">
+
+          <!-- Q1 -->
+          <div class="quiz-question-block"
+               data-correct="option-b"
+               data-explanation-right="完全正确——Delorean 会获取交易时刻所有账户和程序的完整快照，并使用真实的 SVM 在本地回放。"
+               data-explanation-wrong="想想哪个工具专注于调试历史交易，哪个用于运行 validator，哪个用于 MEV。">
+            <h3 class="quiz-question">在 Jupiter 上的一笔交易失败，提示"simulation failed"。你想回放这笔历史交易，看看究竟哪里出了问题。哪个工具是为此设计的？</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Firedancer——运行高性能 validator</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Delorean——获取 fixture 并在本地回放交易</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Samba——为 validator 添加 MEV 捆绑排序</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-block"
+               data-correct="option-c"
+               data-explanation-right="正确。400ms 听起来不短，但当你需要对数千笔交易进行完整的密码学验证时，你必须用上高频交易领域的每一个技巧。"
+               data-explanation-wrong="标准 Web 服务器和数据库的延迟以毫秒到秒计——对于一个需要在 400ms 内处理数千笔交易的系统来说，远远太慢。">
+            <h3 class="quiz-question">Solana 每 400 毫秒产生一个新区块。Validator 需要在这个窗口内收集交易、排序、执行，并写出结果。这需要什么样的工程能力？</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>标准 Web 服务器架构</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>谨慎使用数据库事务</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>HFT 风格的低延迟系统工程</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-block"
+               data-correct="option-b"
+               data-explanation-right="完全正确。客户端多样性意味着漏洞会以实现之间分歧的形式浮现，而不是同时悄然破坏所有 validator。这就叫 consensus diversity。"
+               data-explanation-wrong="速度选择和 validator 数量并非主要收益——核心价值在于韧性。当两个独立系统出现分歧，你就知道有漏洞需要排查了。">
+            <h3 class="quiz-question">Firedancer 和 Agave（Solana 的原始 validator）独立实现了相同的 Solana 协议。拥有两个独立实现为什么有价值？</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>让 validator 可以选择更快的那个</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>如果某个漏洞导致分歧，可以定位哪个实现出了问题</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>使网络上的 validator 数量翻倍</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module1')">检查答案</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module1')">再试一次</button>
+        </div>
+      </section>
+
+    </div><!-- /.module-body -->
+  </div><!-- /.module-content -->
+</section>

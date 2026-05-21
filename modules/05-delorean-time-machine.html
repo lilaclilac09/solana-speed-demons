@@ -1,0 +1,414 @@
+<section class="module" id="module-5" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">05</span>
+      <h1 class="module-title">Delorean — 交易时光机</h1>
+      <p class="module-subtitle">Temporal 的 Penrose 服务如何在区块生成时捕获每笔交易的完整快照——并让你以外科手术般的精准重放历史</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- ═══════════════════════════════════════════════════════════
+           SCREEN 1 — The Debugging Problem
+      ════════════════════════════════════════════════════════════ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">调试难题</h2>
+
+        <div class="callout callout-warning" style="margin-bottom: var(--space-8)">
+          <div class="callout-icon">🚨</div>
+          <div class="callout-content">
+            <strong class="callout-title">场景描述</strong>
+            <p>一个交易机器人在一笔本应成功的交易中损失了 40,000 美元。这笔交易深埋于 3 天前的某个 Solana
+              <span class="term" data-definition="区块是一批永久写入 Solana 账本的交易集合。每个区块对应一个 slot——一个约 400ms 的时间窗口，由指定的 leader validator 生产该区块。">区块</span>
+              中。网络已经向前推进。那个时刻的区块链状态在任何运行中的节点上都不再存在。你该如何调试？
+            </p>
+          </div>
+        </div>
+
+        <p>
+          标准的区块链调试几乎无从下手。你能看到交易失败了，但要理解失败的原因，你需要知道那个特定时刻每一个
+          <span class="term" data-definition="在 Solana 中，账户是区块链上的一条记录，可以持有 SOL（lamports）、数据或可执行程序代码。每个钱包、代币余额和智能合约都是一个账户。">账户</span>、
+          每一个
+          <span class="term" data-definition="在 Solana 中，program 是部署到区块链上的智能合约——当交易调用它时运行的可执行代码。Program 是无状态的；它们读写独立的账户记录。">program</span>、
+          每一个系统变量的精确状态。而那个状态已经消失了。
+        </p>
+
+        <p>
+          Temporal XYZ 构建了 Penrose——一个与 Solana validator 并行运行的服务，在区块生成时为每笔交易捕获完整的状态快照。
+          <span class="term" data-definition="Delorean 是一个命令行工具，它连接到 Penrose 服务以获取交易 fixture，并使用内存中的 SVM（Solana 虚拟机）在本地重放这些交易。名字来源于《回到未来》中的时光旅行汽车。">Delorean</span>
+          就是获取这些快照并重放它们的工具。
+        </p>
+
+        <div class="callout callout-accent animate-in">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">这为何成为可能</strong>
+            <p>Temporal 运营的基础设施在 validator 生产区块时捕获交易
+              <span class="term" data-definition="fixture 是 Solana VM 重放一笔交易所需的完整快照：原始交易字节、交易前后所有账户状态、program 字节码、系统变量，以及该精确区块时激活的协议功能标志。">fixture</span>。
+              每个 fixture 包含 Solana VM 重放该交易所需的一切：交易前后的账户状态、programs、系统变量、已激活的功能标志。它是一个完美的时间胶囊。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           SCREEN 2 — What Is a Fixture?
+      ════════════════════════════════════════════════════════════ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">什么是 Fixture？</h2>
+
+        <p>每个 fixture 是一个包含 12 个字段的结构化记录——它们共同构成了一笔交易的完整 Solana 宇宙重建。</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code>
+<span class="code-line"><span class="code-keyword">pub</span> <span class="code-keyword">struct</span> <span class="code-function">TransactionFixture</span> {</span>
+<span class="code-line">    <span class="code-keyword">pub</span> <span class="code-property">schema_version</span>: <span class="code-string">u32</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span> <span class="code-property">slot</span>: <span class="code-string">u64</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span> <span class="code-property">recent_blockhash</span>: <span class="code-string">Hash</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span> <span class="code-property">signature</span>: <span class="code-string">Signature</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span> <span class="code-property">enabled_features</span>: <span class="code-string">Vec&lt;Pubkey&gt;</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span> <span class="code-property">lamports_per_signature</span>: <span class="code-string">u64</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span> <span class="code-property">transaction</span>: <span class="code-string">Vec&lt;u8&gt;</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span> <span class="code-property">pre_accounts</span>: <span class="code-string">Vec&lt;FixtureAccount&gt;</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span> <span class="code-property">programs</span>: <span class="code-string">Vec&lt;FixtureProgramData&gt;</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span> <span class="code-property">sysvars</span>: <span class="code-string">Arc&lt;Vec&lt;FixtureSysvar&gt;&gt;</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span> <span class="code-property">result</span>: <span class="code-string">ExecutionResult</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span> <span class="code-property">post_accounts</span>: <span class="code-string">Vec&lt;FixtureAccount&gt;</span>,</span>
+<span class="code-line">}</span>
+            </code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl"><strong>schema_version</strong> — 格式版本号。随着 Penrose 的演进，支持向后兼容。</p>
+              <p class="tl"><strong>slot</strong> — 事件发生时的精确 Solana
+                <span class="term" data-definition="slot 是 Solana 中一个编号的时间窗口（约 400ms），在此期间一个指定的 validator 生产一个区块。Solana 上的每个事件都精确映射到一个 slot 编号——它是区块链的通用时间戳。">区块编号</span>。
+                每个区块都有精确的编号。</p>
+              <p class="tl"><strong>recent_blockhash</strong> — 一个类似时间戳的值，用于防止交易重放攻击。</p>
+              <p class="tl"><strong>signature</strong> — 交易唯一ID。这正是你传给 delorean 的值。</p>
+              <p class="tl"><strong>enabled_features</strong> — 当时激活的功能标志列表。Solana 有数百个随时间激活的协议开关（称为 features）。此字段记录了该精确区块时哪些处于激活状态。</p>
+              <p class="tl"><strong>lamports_per_signature</strong> — 该时刻每个
+                <span class="term" data-definition="lamport 是 SOL（Solana 原生货币）的最小单位。1 SOL 等于 1,000,000,000（10 亿）lamports——类似于 1 美元等于 100 美分。">lamport</span>
+                的手续费成本。手续费会随时间变化。</p>
+              <p class="tl"><strong>transaction</strong> — 原始交易
+                <span class="term" data-definition="字节码是程序编译成的原始二进制指令。就像菜谱和成品菜肴的区别——字节码是计算机实际执行的内容。">字节</span>：
+                指令、账户、签名。</p>
+              <p class="tl"><strong>pre_accounts</strong> — 交易前所有账户状态：每个钱包余额、代币账户和 program 账户在交易运行前的状态。</p>
+              <p class="tl"><strong>programs</strong> — 涉及的智能合约字节码：每个相关智能合约的
+                <span class="term" data-definition="ELF（可执行与可链接格式）二进制文件是 program 的编译字节码——源代码的机器可读版本。Solana programs 在部署到链上之前被编译为 BPF ELF 二进制文件。">字节码（ELF 二进制）</span>，
+                以该精确 slot 时的版本捕获。</p>
+              <p class="tl"><strong>sysvars</strong> — 系统变量（如当前 rent 价格）：
+                <span class="term" data-definition="sysvars（系统变量）是 Solana 上暴露全网信息的特殊只读账户：当前时钟、rent 价格、epoch 信息和最近区块哈希。Programs 读取 sysvars 来做出与时间和成本相关的决策。">Solana 系统变量</span>——
+                rent 价格、epoch 信息、时钟。对于准确重放至关重要。</p>
+              <p class="tl"><strong>result</strong> — 原始 validator 记录的内容：状态、已使用的
+                <span class="term" data-definition="计算单元（CUs）衡量交易完成了多少计算工作。Solana VM 像燃油表一样追踪 CUs——每条指令消耗 CUs，超出限制的交易会被取消。">计算单元</span>、
+                返回数据。</p>
+              <p class="tl"><strong>post_accounts</strong> — 交易后所有账户状态：执行后每个账户的状态。用于验证重放准确性。</p>
+            </div>
+          </div>
+        </div>
+
+        <p>拥有全部 12 个字段，你就能重建那笔交易存在时的精确 Solana 宇宙——随时随地重放它。</p>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           SCREEN 3 — How Delorean Works: Group Chat
+      ════════════════════════════════════════════════════════════ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Delorean 工作原理</h2>
+
+        <p>当你运行 <code>delorean &lt;signature&gt; &lt;penrose-url&gt;</code> 时，五件事依次发生——从网络获取到本地重放与验证。</p>
+
+        <div class="chat-window" id="chat-module5">
+          <div class="chat-messages">
+
+            <div class="chat-message" data-msg="0" data-sender="developer" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">D</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-4)">开发者</span>
+                <p><code>$ delorean WRM4dvtB32k... https://penrose.temporal.xyz</code></p>
+              </div>
+            </div>
+
+            <div class="chat-message" data-msg="1" data-sender="delorean-cli" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">C</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">Delorean CLI</span>
+                <p>正在连接 penrose.temporal.xyz 上的 Penrose... 请求签名 WRM4dvt... 对应的
+                  <span class="term" data-definition="fixture 是 Solana VM 重放一笔交易所需的完整快照：账户状态、program 字节码、系统变量和已激活功能标志——全部在交易所在区块时精确捕获。">fixture</span>...</p>
+              </div>
+            </div>
+
+            <div class="chat-message" data-msg="2" data-sender="penrose" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">P</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">Penrose Service</span>
+                <p>已找到。
+                  <span class="term" data-definition="slot 是一个约 400ms 的时间窗口，在此期间一个 validator 生产一个区块。Slot 420195494 是记录这笔交易的精确编号区块。">Slot 420195494</span>，
+                  3 天前捕获。Fixture 大小：2.1 MB。正在发送
+                  <span class="term" data-definition="base64 是一种将二进制数据（如原始字节）转换为纯文本字符的编码方案。它用于通过基于文本的协议安全传输二进制数据——例如通过 HTTP 发送二进制文件。">base64</span>
+                  编码内容...</p>
+              </div>
+            </div>
+
+            <div class="chat-message" data-msg="3" data-sender="delorean-cli" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">C</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">Delorean CLI</span>
+                <p>已解码。加载 fixture：25 个 pre_accounts，3 个 programs，9 个
+                  <span class="term" data-definition="sysvars 是 Solana 上暴露全网状态的特殊只读账户：时钟、rent 价格、epoch 计划表。fixture 捕获了它们在原始区块时的精确值，以确保重放完全准确。">sysvars</span>，
+                  221 个已激活功能。</p>
+              </div>
+            </div>
+
+            <div class="chat-message" data-msg="4" data-sender="delorean-cli" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">C</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">Delorean CLI</span>
+                <p>正在内存中构建
+                  <span class="term" data-definition="MockBank 是 delorean 对 Solana validator bank 的内存模拟。它从 fixture 加载所有账户状态、programs 和 sysvars，使本地 SVM 能够在原始区块链状态的精确副本上执行。">MockBank</span>...
+                  加载所有账户状态... 清理交易...</p>
+              </div>
+            </div>
+
+            <div class="chat-message" data-msg="5" data-sender="local-svm" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-5)">V</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-5)">Local SVM</span>
+                <p>正在重建状态上执行交易... 已消耗 104,291 个
+                  <span class="term" data-definition="计算单元（CUs）衡量交易的计算工作量。SVM 像燃油表一样追踪 CUs——delorean 将本地 CU 数量与原始数量进行比较以验证重放的准确性。">计算单元</span>。
+                  状态：Ok(())。</p>
+              </div>
+            </div>
+
+            <div class="chat-message" data-msg="6" data-sender="delorean-cli" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">C</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">Delorean CLI</span>
+                <p>状态：匹配 ✓ | 计算单元：匹配 ✓ | 交易后状态：匹配 ✓ | 全部 25 个账户与原始 validator 输出一致。</p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="chat-typing" id="chat-module5-typing" style="display:none">
+            <div class="chat-avatar" id="chat-module5-typing-avatar">?</div>
+            <div class="chat-typing-dots">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">下一条消息</button>
+            <button class="btn chat-all-btn">全部播放</button>
+            <button class="btn chat-reset-btn">重放</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           SCREEN 4 — The --replace-program Superpower
+      ════════════════════════════════════════════════════════════ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading"><code>--replace-program</code> 超能力</h2>
+
+        <p>用原始 program 重放很有用。但 delorean 更进一步：你可以换入自己编译的修复版本，并用历史交易对其进行测试——在部署任何内容之前验证 bug 修复是否有效。</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code>
+<span class="code-line"><span class="code-keyword">fn</span> <span class="code-function">apply_program_replacements</span>(</span>
+<span class="code-line">    <span class="code-property">bank</span>: &amp;<span class="code-string">MockBank</span>,</span>
+<span class="code-line">    <span class="code-property">rent</span>: &amp;<span class="code-string">Rent</span>,</span>
+<span class="code-line">    <span class="code-property">replacements</span>: &amp;[<span class="code-string">ProgramReplacement</span>],</span>
+<span class="code-line">) -&gt; <span class="code-string">Result</span>&lt;(), <span class="code-string">Box</span>&lt;<span class="code-keyword">dyn</span> <span class="code-string">std::error::Error</span>&gt;&gt; {</span>
+<span class="code-line">    <span class="code-keyword">let mut</span> <span class="code-property">accounts</span> = bank.accounts.<span class="code-function">write</span>().<span class="code-function">unwrap</span>();</span>
+<span class="code-line">    <span class="code-keyword">for</span> rep <span class="code-keyword">in</span> replacements {</span>
+<span class="code-line">        <span class="code-keyword">let</span> <span class="code-property">elf</span> = <span class="code-function">read_replacement_elf</span>(&amp;rep.elf_path)?;</span>
+<span class="code-line">        <span class="code-comment">// patch the stored programdata with your new ELF bytes</span></span>
+<span class="code-line">        accounts.<span class="code-function">insert</span>(programdata_address, updated);</span>
+<span class="code-line">    }</span>
+<span class="code-line">    <span class="code-keyword">Ok</span>(())</span>
+<span class="code-line">}</span>
+            </code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">此函数在重放运行前替换已部署 program 的
+                <span class="term" data-definition="字节码是 program 的编译二进制形式——Solana VM 实际执行的原始机器指令。磁盘上的 ELF 文件就是字节码容器。">字节码</span>。</p>
+              <p class="tl">锁定内存账户数据库以进行写操作。</p>
+              <p class="tl">对 <code>--replace-program</code> 指定的每个 program 替换项：</p>
+              <p class="tl">从磁盘读取你的新 program 二进制文件（
+                <span class="term" data-definition="ELF（可执行与可链接格式）文件是 Solana programs 的标准编译二进制格式。当你运行 cargo build-sbf 时，输出就是一个可以部署或传递给 delorean 的 ELF 文件。">ELF 文件</span>）。</p>
+              <p class="tl">用你的新版本替换 fixture 中存储的 program——其他所有内容保持不变。</p>
+              <p class="tl">结果：重放使用你的新代码，但保留原始历史账户状态。</p>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          用法：<code>delorean &lt;SIGNATURE&gt; &lt;URL&gt; --replace-program=&lt;PUBKEY&gt;:&lt;PATH&gt;</code>。传入旧 program 的
+          <span class="term" data-definition="pubkey（公钥）是 Solana 上任何账户或 program 的唯一地址——类似银行账号。每个钱包、代币账户和 program 都有一个 pubkey 作为其链上标识符。">pubkey</span>
+          以及你新编译的二进制文件路径。Delorean 将使用你的修复版本，针对真实的原始状态运行历史交易。
+        </p>
+
+        <div class="callout callout-accent animate-in">
+          <div class="callout-icon">🔬</div>
+          <div class="callout-content">
+            <strong class="callout-title">杀手级使用场景</strong>
+            <p>发现了一个 2 周前导致真实财务损失的 bug？编译你的修复版本，用 <code>--replace-program</code> 重放那笔原始失败交易，在部署任何内容之前验证修复在生产级历史状态下有效。这是大多数区块链无法提供的测试水平。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           SCREEN 5 — The Full Workflow
+      ════════════════════════════════════════════════════════════ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">完整工作流程</h2>
+
+        <p>从"交易失败"到"修复经真实生产状态验证"，共五步。</p>
+
+        <div class="step-cards animate-in">
+
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <strong>找到交易</strong>
+              <p>从你的区块链浏览器或日志中获取交易
+                <span class="term" data-definition="signature 是 Solana 交易的唯一 ID——一个 64 字节的加密字符串，既是授权证明，也是交易的永久标识符。你可以在任何 Solana 浏览器中查找它。">signature</span>。
+                这是你要调试的失败事件的唯一 ID。</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <strong>获取 fixture</strong>
+              <p>运行：<code>delorean &lt;signature&gt; &lt;penrose-url&gt;</code>。Delorean 调用
+                <span class="term" data-definition="getTransactionFixture 是 Penrose 服务暴露的自定义 RPC 方法。与标准 Solana RPC 方法不同，它返回完整的 fixture——所有账户状态、programs 和 sysvars——而不仅仅是交易结果。">getTransactionFixture</span>
+                并下载完整的历史快照。</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <strong>重放并对比</strong>
+              <p>Delorean 构建 MockBank，通过
+                <span class="term" data-definition="SVM（Solana 虚拟机）是执行链上 programs 的运行时。Delorean 启动一个加载了 fixture 状态的内存 SVM 实例，使重放与真实网络上发生的事情完全相同。">SVM</span>
+                执行，并打印：状态匹配/不匹配、计算单元匹配/不匹配、交易后账户状态匹配/不匹配。</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <strong>替换并重新测试</strong>
+              <p>添加 <code>--replace-program=&lt;addr&gt;:&lt;your-fix.so&gt;</code>，用你修补后的 program 针对相同的历史状态进行重放。</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <strong>验证并部署</strong>
+              <p>如果你的修复使重放通过，说明你已经针对真实生产状态完成了测试。放心部署吧。</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           SCREEN 6 — Quiz
+      ════════════════════════════════════════════════════════════ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">检验你的理解</h2>
+
+        <div class="quiz-container" id="quiz-module5">
+
+          <!-- Q1 -->
+          <div class="quiz-question-block"
+               data-correct="option-a"
+               data-explanation-right="正确——fixture 的 programs 字段包含每个 program 在该 slot 时的精确 ELF 字节码。Delorean 自动使用这个历史版本，而非当前部署的版本。无需使用 --replace-program。"
+               data-explanation-wrong="fixture 已经包含了历史 program 字节码。你只需在测试新版本时才使用 --replace-program。默认行为已正确使用原始代码进行重放。">
+            <h3 class="quiz-question">一笔 Raydium 兑换在 2 周前失败。Raydium 此后已升级了他们的 program。你想调试原始失败（而非当前版本）。使用 delorean 的正确方法是什么？</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>获取 fixture 并重放——fixture 包含该 slot 时 program 的字节码</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>获取 fixture，但使用 --replace-program 加载今天的 Raydium 二进制文件</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>无法调试——历史 program 版本已不复存在</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-block"
+               data-correct="option-b"
+               data-explanation-right="计算单元不匹配意味着你的本地执行消耗的计算单元数量与原始 validator 不同。这通常指向已激活功能集不同、program 版本不同（如果你使用了 --replace-program），或者你本地 SVM 版本与 validator 之间存在实现差异。"
+               data-explanation-wrong="交易可以成功（Ok 状态）但仍存在计算单元不匹配。不匹配具体指向原始 validator 与你本地重放之间的环境差异。">
+            <h3 class="quiz-question">Delorean 显示："计算单元：不匹配——实际 95,000，预期 104,291。"这可能意味着什么？</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>交易在本地重放时失败了</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>本地 SVM 环境与原始 validator 在某些方面存在差异</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Penrose 捕获的 fixture 有误</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-block"
+               data-correct="option-b"
+               data-explanation-right="完全正确——这正是 delorean 的杀手级使用场景。使用 --replace-program 替换你的新字节码，然后重放原始失败交易。如果现在通过了，说明你已经针对真实历史生产状态验证了你的修复——无需部署任何内容。"
+               data-explanation-wrong="部署到主网测试风险高且速度慢。手动创建 fixture 容易出错——你可能会遗漏导致原始失败的细微状态。delorean 的意义就在于安全地针对真实生产状态进行测试。">
+            <h3 class="quiz-question">你想测试你的新代币 program 修复是否能处理导致 40,000 美元损失的边缘情况。使用 delorean 的工作流程是什么？</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>将修复部署到主网，然后检查交易历史以查看是否发生类似失败</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>运行 delorean 并使用 --replace-program 指向你编译的修复版本，针对原始失败交易进行测试</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>手动创建一个近似失败条件的测试 fixture</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module5')">检查答案</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module5')">重新作答</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
