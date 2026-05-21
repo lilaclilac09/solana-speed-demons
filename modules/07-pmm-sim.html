@@ -1,52 +1,52 @@
 <section class="module" id="module-7" style="background: var(--color-bg-warm);">
 
-  <!-- ── SCREEN 1: 开场钩子 ─────────────────────────────── -->
+  <!-- ── SCREEN 1: Opening hook ─────────────────────────────── -->
   <div class="screen">
     <div class="screen-inner">
       <div class="module-label animate-in">07</div>
-      <h2 class="module-title animate-in">pmm-sim：私有 AMM 的解剖台</h2>
-      <p class="module-subtitle animate-in">同一个合约、同一个流动性池、相同的金额——但不同身份的调用者会拿到不同的汇率。pmm-sim 让你在本地测量这个差距，一行 mainnet 交易都不需要发。</p>
+      <h2 class="module-title animate-in">pmm-sim: The Private AMM Dissection Table</h2>
+      <p class="module-subtitle animate-in">Same contract, same liquidity pool, same size — but different callers get different rates. pmm-sim lets you measure that gap locally, without sending a single mainnet transaction.</p>
 
       <div class="callout callout-accent animate-in" style="margin-top: var(--space-10);">
-        <div class="callout-title">场景还原</div>
-        <p>你用 <span class="term" data-tooltip="Jupiter：Solana 最大的聚合器，负责在多个 DEX 之间寻找最优兑换路径">Jupiter</span> 把 15,000 <span class="term" data-tooltip="USDC：与美元 1:1 锚定的稳定币，是 Solana 上交易量最大的代币对之一">USDC</span> 换成 <span class="term" data-tooltip="WSOL：Wrapped SOL，把原生 SOL 封装成 SPL 代币格式，方便在 DeFi 协议中使用">WSOL</span>。你的朋友直接调用同一个 <span class="term" data-tooltip="HumidiFi：Solana 上一个私有 AMM，提供 WSOL-USDC 等交易对，拥有多个 swap 指令版本（v1/v2/v3）">HumidiFi</span> 合约做同样的兑换。她拿到的 WSOL 更少。</p>
-        <p style="margin-top: var(--space-3);">同一个合约，同一个池子，同一笔金额——为什么结果不同？</p>
+        <div class="callout-title">Scene</div>
+        <p>You use <span class="term" data-tooltip="Jupiter: The largest aggregator on Solana, finding the best swap routes across many DEXes.">Jupiter</span> to swap 15,000 <span class="term" data-tooltip="USDC: A US-dollar-pegged stablecoin, one of the highest-volume trading pairs on Solana.">USDC</span> for <span class="term" data-tooltip="WSOL: Wrapped SOL — native SOL packaged as an SPL token so it can be used in DeFi protocols.">WSOL</span>. Your friend calls the same <span class="term" data-tooltip="HumidiFi: A private AMM on Solana providing WSOL-USDC and other pairs, with multiple swap instruction versions (v1/v2/v3).">HumidiFi</span> contract directly to do the same trade. She gets less WSOL.</p>
+        <p style="margin-top: var(--space-3);">Same contract, same pool, same size — why are the results different?</p>
       </div>
 
       <p class="animate-in" style="margin-top: var(--space-8);">
-        答案在于 <strong>私有 AMM（Prop AMM）</strong>的设计哲学：它们不是中立的。它们识别调用者的身份，并为白名单聚合器提供优惠汇率。<span class="term" data-tooltip="pmm-sim：LimeChain 开发的 Rust 工具，用于在本地模拟和基准测试 Solana 私有 AMM 的兑换行为，支持 CPI 伪装">pmm-sim</span> 让你量化这个差距。
+        The answer lies in the design philosophy of <strong>private AMMs (Prop AMMs)</strong>: they are not neutral. They identify the caller and offer better rates to whitelisted aggregators. <span class="term" data-tooltip="pmm-sim: A Rust tool from LimeChain for simulating and benchmarking swap behavior of Solana private AMMs locally, with CPI spoofing.">pmm-sim</span> lets you quantify that gap.
       </p>
     </div>
   </div>
 
-  <!-- ── SCREEN 2: 私有 AMM 生态 ───────────────────────────── -->
+  <!-- ── SCREEN 2: The private AMM ecosystem ───────────────────────────── -->
   <div class="screen">
     <div class="screen-inner">
-      <h3 class="screen-title animate-in">Solana 的秘密菜单</h3>
-      <p class="animate-in">公开的 <span class="term" data-tooltip="AMM：自动做市商，一种用算法而非挂单簿来撮合交易的 DEX 机制，如 Raydium、Orca 使用恒定乘积公式 x·y=k">AMM</span>（如 Raydium、Orca）用公开的数学公式定价，任何人得到相同的价格。私有 AMM 则不同——它们的定价逻辑是闭源的，并且会根据 <span class="term" data-tooltip="CPI：Cross-Program Invocation，跨程序调用。Solana 上一个程序调用另一个程序的机制，调用者身份（program_id）是可识别的">CPI</span> 调用者的程序地址给出不同的报价。</p>
+      <h3 class="screen-title animate-in">Solana's secret menu</h3>
+      <p class="animate-in">Public <span class="term" data-tooltip="AMM: Automated Market Maker — a DEX that matches trades with an algorithm rather than an order book. Raydium and Orca use the constant-product formula x·y=k.">AMMs</span> (Raydium, Orca) price with public math, and everyone gets the same quote. Private AMMs are different — their pricing logic is closed-source, and they hand out different quotes based on the <span class="term" data-tooltip="CPI: Cross-Program Invocation, the Solana mechanism by which one program calls another. The caller's identity (program_id) is visible to the callee.">CPI</span> caller's program address.</p>
 
       <div class="stagger-children pattern-grid" style="margin-top: var(--space-8);">
         <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1);">
           <div class="pattern-card-title">HumidiFi</div>
-          <div class="pattern-card-desc">支持 swap-v1 / v2 / v3 三种指令，5 个 WSOL-USDC 市场，对 Jupiter 的报价显著优于直接调用。</div>
+          <div class="pattern-card-desc">Supports swap-v1 / v2 / v3 instructions across 5 WSOL-USDC markets, with significantly better quotes for Jupiter than for direct callers.</div>
         </div>
         <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2);">
           <div class="pattern-card-title">SolFi V2</div>
-          <div class="pattern-card-desc">流动性深厚的 WSOL-USDC 和 USDT-USDC 市场，使用预言机定价，对 DFlow 有特别优惠。</div>
+          <div class="pattern-card-desc">Deep liquidity on WSOL-USDC and USDT-USDC markets, oracle-based pricing, and special treatment for DFlow.</div>
         </div>
         <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3);">
           <div class="pattern-card-title">GoonFi / BisonFi</div>
-          <div class="pattern-card-desc">新兴私有 AMM，部分对黑名单地址有限制，白名单聚合器享受更低滑点。</div>
+          <div class="pattern-card-desc">Emerging private AMMs. Some restrict blacklisted addresses; whitelisted aggregators enjoy lower slippage.</div>
         </div>
         <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4);">
           <div class="pattern-card-title">Tessera / ObricV2 / ZeroFi</div>
-          <div class="pattern-card-desc">专注于稳定币或特定交易对，ObricV2 使用多路预言机，ZeroFi 有独立的 vault 结构。</div>
+          <div class="pattern-card-desc">Focused on stablecoins or specific pairs. ObricV2 uses multi-oracle pricing; ZeroFi has a separate vault structure.</div>
         </div>
       </div>
 
       <div class="callout callout-info animate-in" style="margin-top: var(--space-8);">
-        <div class="callout-title">四大聚合器的"VIP 通行证"</div>
-        <p>pmm-sim 支持伪装成 <strong>Jupiter</strong>（route_v2 指令）、<strong>DFlow</strong>（swap2 指令）、<strong>Titan</strong>（swap_route_v2 指令）、<strong>OKX Labs</strong>（swap_v3_with_cpi_event 指令）。不同聚合器对应不同的路由程序 ID，私有 AMM 通过识别这个 ID 来决定给哪档报价。</p>
+        <div class="callout-title">The four aggregators' "VIP passes"</div>
+        <p>pmm-sim can impersonate <strong>Jupiter</strong> (route_v2 instruction), <strong>DFlow</strong> (swap2 instruction), <strong>Titan</strong> (swap_route_v2 instruction), and <strong>OKX Labs</strong> (swap_v3_with_cpi_event instruction). Each aggregator has its own router program ID, and private AMMs use that ID to decide which quote tier to serve.</p>
       </div>
     </div>
   </div>
@@ -54,68 +54,68 @@
   <!-- ── SCREEN 3: LiteSVM vs Delorean ──────────────────────── -->
   <div class="screen">
     <div class="screen-inner">
-      <h3 class="screen-title animate-in">两种本地 SVM：pmm-sim vs Delorean</h3>
-      <p class="animate-in">pmm-sim 和 Delorean 都在本地运行 <span class="term" data-tooltip="SVM：Solana Virtual Machine，Solana 虚拟机，负责执行所有智能合约指令">SVM</span>，但它们的出发点截然不同。</p>
+      <h3 class="screen-title animate-in">Two local SVMs: pmm-sim vs Delorean</h3>
+      <p class="animate-in">pmm-sim and Delorean both run the <span class="term" data-tooltip="SVM: Solana Virtual Machine — executes every smart-contract instruction.">SVM</span> locally, but their starting points are completely different.</p>
 
       <div class="translation-block animate-in" style="margin-top: var(--space-8);">
         <div class="translation-code">
-          <div class="translation-label">Delorean 方式</div>
-          <pre><code><span class="code-comment">// 从 Penrose 拉取历史 fixture</span>
+          <div class="translation-label">The Delorean way</div>
+          <pre><code><span class="code-comment">// Pull a historical fixture from Penrose</span>
 <span class="code-keyword">let</span> fixture = get_transaction_fixture(
     rpc, &amp;signature
 )?;
-<span class="code-comment">// 用历史状态构建 MockBank</span>
+<span class="code-comment">// Build a MockBank from historical state</span>
 <span class="code-keyword">let</span> bank = build_mock_bank(&amp;fixture);
-<span class="code-comment">// 重放那笔交易</span>
+<span class="code-comment">// Replay that transaction</span>
 execute_transaction(&amp;bank, &amp;fixture.transaction);</code></pre>
         </div>
         <div class="translation-english">
-          <div class="translation-label">pmm-sim 方式</div>
-          <p><strong>Delorean</strong> 是考古学家——还原过去某笔真实交易的完整现场，每个账户状态、每个系统变量都来自历史快照，目的是重放和调试。</p>
-          <p style="margin-top: var(--space-4);"><strong>pmm-sim</strong> 是实验室——从零搭建一个干净的 <span class="term" data-tooltip="LiteSVM：一个轻量级的进程内 Solana VM 实现，启动速度远快于本地测试验证节点，适合单元测试和基准测试">LiteSVM</span> 环境，注入你需要的账户和程序，然后反复执行 swap，测量汇率和算力消耗。没有历史包袱，随时重置，随时对比。</p>
+          <div class="translation-label">The pmm-sim way</div>
+          <p><strong>Delorean</strong> is an archaeologist — it restores the complete crime scene of a past transaction, every account, every sysvar straight from a historical snapshot, in order to replay and debug.</p>
+          <p style="margin-top: var(--space-4);"><strong>pmm-sim</strong> is a lab — it builds a clean <span class="term" data-tooltip="LiteSVM: A lightweight in-process Solana VM implementation that starts far faster than a local test validator. Ideal for unit tests and benchmarking.">LiteSVM</span> environment from scratch, injects the accounts and programs you need, then runs swaps repeatedly to measure rates and compute usage. No historical baggage, reset at will, compare at will.</p>
         </div>
       </div>
 
       <div class="translation-block animate-in">
         <div class="translation-code">
-          <div class="translation-label">env.rs — 环境初始化</div>
+          <div class="translation-label">env.rs — environment init</div>
           <pre><code><span class="code-keyword">let mut</span> svm = LiteSVM::new()
     .with_default_programs()
     .with_sysvars()
     .with_sigverify(<span class="code-keyword">true</span>)
     .with_compute_budget(budget);
 
-<span class="code-comment">// 注入代币 mint</span>
+<span class="code-comment">// Inject token mints</span>
 mints.iter().for_each(|(mint, dec)| {
     svm.set_account(*mint,
         Misc::mk_mint_acc(*dec))
 });
 
-<span class="code-comment">// 加载程序（从磁盘或 RPC 实时拉取）</span>
+<span class="code-comment">// Load programs (from disk or live from RPC)</span>
 svm.add_program_from_file(
     program_id, path_to_elf
 );</code></pre>
         </div>
         <div class="translation-english">
-          <div class="translation-label">中文释义</div>
-          <p><strong>LiteSVM::new()</strong> — 创建一个空白的进程内虚拟机，不需要启动本地验证节点，毫秒级就绪。</p>
-          <p style="margin-top: var(--space-3);"><strong>with_sysvars()</strong> — 注入 Solana 系统变量（rent、clock 等），让程序以为自己在真实网络上运行。</p>
-          <p style="margin-top: var(--space-3);"><strong>svm.set_account()</strong> — 手动插入任何账户状态。可以用磁盘缓存的静态快照，也可以通过 RPC 实时拉取 mainnet 最新状态（JIT 模式）。</p>
-          <p style="margin-top: var(--space-3);"><strong>add_program_from_file()</strong> — 加载私有 AMM 的 <span class="term" data-tooltip="ELF：Executable and Linkable Format，Solana 程序的字节码格式，部署在链上的智能合约本质上是一段 ELF 二进制">ELF</span> 字节码。程序本身是公开可下载的，即使逻辑闭源。</p>
+          <div class="translation-label">In plain English</div>
+          <p><strong>LiteSVM::new()</strong> — Spin up a blank in-process VM. No local validator needed; ready in milliseconds.</p>
+          <p style="margin-top: var(--space-3);"><strong>with_sysvars()</strong> — Inject Solana system variables (rent, clock, etc.), so programs think they're running on the real network.</p>
+          <p style="margin-top: var(--space-3);"><strong>svm.set_account()</strong> — Manually insert any account state. Can use a static snapshot cached on disk, or fetch the latest mainnet state via RPC (JIT mode).</p>
+          <p style="margin-top: var(--space-3);"><strong>add_program_from_file()</strong> — Load the private AMM's <span class="term" data-tooltip="ELF: Executable and Linkable Format, the bytecode format for Solana programs. A deployed on-chain smart contract is essentially an ELF binary.">ELF</span> bytecode. The program itself is publicly downloadable even when its logic is closed-source.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── SCREEN 4: CPI 伪装原理 ──────────────────────────────── -->
+  <!-- ── SCREEN 4: CPI spoofing ──────────────────────────────── -->
   <div class="screen">
     <div class="screen-inner">
-      <h3 class="screen-title animate-in">CPI 伪装：穿上 Jupiter 的外衣</h3>
-      <p class="animate-in">私有 AMM 通过检查 CPI 调用链里的 <span class="term" data-tooltip="program_id：程序地址，每个 Solana 程序都有唯一的公钥地址，CPI 调用时被调用方可以读取这个地址">program_id</span> 来判断调用者身份。pmm-sim 的核心技巧：把 Magnus Router 的 program_id 替换成目标聚合器的 program_id，让私有 AMM 以为是 Jupiter 或 DFlow 在调用它。</p>
+      <h3 class="screen-title animate-in">CPI spoofing: putting on Jupiter's coat</h3>
+      <p class="animate-in">Private AMMs identify the caller by inspecting the <span class="term" data-tooltip="program_id: A program's address. Every Solana program has a unique pubkey, and a callee can read this address during a CPI.">program_id</span> in the CPI chain. pmm-sim's core trick: replace Magnus Router's program_id with the target aggregator's program_id, so the private AMM thinks it's being called by Jupiter or DFlow.</p>
 
       <div class="translation-block animate-in">
         <div class="translation-code">
-          <div class="translation-label">builder.rs — 指令构建器</div>
+          <div class="translation-label">builder.rs — instruction builder</div>
           <pre><code><span class="code-keyword">pub fn</span> instruction(
     &amp;self,
     spoof: Option&lt;Aggregator&gt;,
@@ -136,79 +136,79 @@ svm.add_program_from_file(
 }</code></pre>
         </div>
         <div class="translation-english">
-          <div class="translation-label">中文释义</div>
-          <p><strong>spoof: None</strong> — 用 Magnus Router 本身的身份调用，私有 AMM 按"普通来源"定价。</p>
-          <p style="margin-top: var(--space-3);"><strong>Aggregator::Jupiter → RouteV2Builder</strong> — 使用 Jupiter 的 <code>route_v2</code> 指令鉴别符（discriminator），并把 program_id 替换成 Jupiter 的地址。私有 AMM 看到"Jupiter 在调用我"，切换到优惠汇率档。</p>
-          <p style="margin-top: var(--space-3);"><strong>每个聚合器对应不同指令</strong> — 这是关键。私有 AMM 不只是检查 program_id，它们还检查指令的鉴别符（前 8 字节）。每个聚合器的接口略有不同，必须完整仿冒才能触发优惠档位。</p>
-          <p style="margin-top: var(--space-3);">结果：同一笔 swap，用 <code>--spoof=jupiter</code> 和 <code>--spoof=dflow</code> 各跑一次，就能量化两个聚合器在同一个私有 AMM 里的汇率差距。</p>
+          <div class="translation-label">In plain English</div>
+          <p><strong>spoof: None</strong> — Calls under Magnus Router's own identity; the private AMM prices you like a "regular source".</p>
+          <p style="margin-top: var(--space-3);"><strong>Aggregator::Jupiter → RouteV2Builder</strong> — Uses Jupiter's <code>route_v2</code> instruction discriminator and substitutes Jupiter's address as program_id. The private AMM sees "Jupiter is calling me" and flips to the preferred-rate tier.</p>
+          <p style="margin-top: var(--space-3);"><strong>Each aggregator uses different instructions</strong> — This is key. Private AMMs don't just check program_id; they also check the instruction discriminator (first 8 bytes). Each aggregator's interface is slightly different, so a complete impersonation is required to trigger the better tier.</p>
+          <p style="margin-top: var(--space-3);">The payoff: run the same swap once with <code>--spoof=jupiter</code> and once with <code>--spoof=dflow</code> and you can quantify the rate gap between two aggregators inside the same private AMM.</p>
         </div>
       </div>
 
       <!-- group chat -->
       <div class="chat-container animate-in" id="chat-module7">
         <div class="chat-bubble actor-4">
-          <div class="chat-actor">交易员</div>
+          <div class="chat-actor">Trader</div>
           pmm-sim single --pmms=humidifi --amount-in=15000 --src-token=USDC --dst-token=WSOL
         </div>
         <div class="chat-bubble actor-1">
           <div class="chat-actor">pmm-sim CLI</div>
-          JIT 模式：从 mainnet 拉取 HumidiFi 最新账户状态，slot=401101387...
+          JIT mode: pulling latest HumidiFi account state from mainnet, slot=401101387…
         </div>
         <div class="chat-bubble actor-1">
           <div class="chat-actor">pmm-sim CLI</div>
-          LiteSVM 初始化完成。注入 HumidiFi 程序 ELF + 25 个账户。钱包空投 10 SOL。
+          LiteSVM initialized. Injected HumidiFi program ELF + 25 accounts. Wallet airdropped 10 SOL.
         </div>
         <div class="chat-bubble actor-2">
-          <div class="chat-actor">Magnus Router（直接调用）</div>
-          执行 swap：15,000 USDC → WSOL。结果：拿到 97.82 WSOL。CU：45,231。
+          <div class="chat-actor">Magnus Router (direct call)</div>
+          Executing swap: 15,000 USDC → WSOL. Result: got 97.82 WSOL. CU: 45,231.
         </div>
         <div class="chat-bubble actor-4">
-          <div class="chat-actor">交易员</div>
+          <div class="chat-actor">Trader</div>
           pmm-sim single --pmms=humidifi --amount-in=15000 --src-token=USDC --dst-token=WSOL --spoof=jupiter
         </div>
         <div class="chat-bubble actor-2">
           <div class="chat-actor">Jupiter Spoof Router</div>
-          HumidiFi 识别到 Jupiter program_id，切换优惠报价...
+          HumidiFi recognizes the Jupiter program_id, switching to preferred quotes…
         </div>
         <div class="chat-bubble actor-5">
           <div class="chat-actor">HumidiFi</div>
-          Jupiter 调用者确认。执行优惠汇率档：15,000 USDC → 98.41 WSOL。CU：48,109。
+          Jupiter caller confirmed. Serving preferred-rate tier: 15,000 USDC → 98.41 WSOL. CU: 48,109.
         </div>
         <div class="chat-bubble actor-1">
           <div class="chat-actor">pmm-sim CLI</div>
-          汇率差：+0.59 WSOL（+0.60%）。Jupiter 优惠确认。基准数据已写入 datasets/。
+          Rate delta: +0.59 WSOL (+0.60%). Jupiter preferential confirmed. Benchmark data written to datasets/.
         </div>
       </div>
       <div class="chat-controls">
-        <button class="btn-secondary" onclick="chatStep('chat-module7', -1)">上一条</button>
-        <button class="btn-primary" onclick="chatStep('chat-module7', 1)">下一条消息</button>
-        <button class="btn-secondary" onclick="chatPlay('chat-module7')">全部播放</button>
-        <button class="btn-secondary" onclick="chatReset('chat-module7')">重播</button>
+        <button class="btn-secondary" onclick="chatStep('chat-module7', -1)">Previous</button>
+        <button class="btn-primary" onclick="chatStep('chat-module7', 1)">Next message</button>
+        <button class="btn-secondary" onclick="chatPlay('chat-module7')">Play all</button>
+        <button class="btn-secondary" onclick="chatReset('chat-module7')">Replay</button>
       </div>
     </div>
   </div>
 
-  <!-- ── SCREEN 5: 基准测试 + 步骤卡 ───────────────────────────── -->
+  <!-- ── SCREEN 5: Benchmarking + step cards ───────────────────────────── -->
   <div class="screen">
     <div class="screen-inner">
-      <h3 class="screen-title animate-in">基准测试：批量测量汇率曲线</h3>
-      <p class="animate-in">单次 swap 告诉你一个价格点。<strong>benchmark 模式</strong>让你扫描整条汇率曲线——从 1 WSOL 到 4000 WSOL，每步 1 WSOL，测量每个规模下的汇率和 <span class="term" data-tooltip="CU：Compute Units，算力单位。Solana 限制每笔交易最多消耗 1,400,000 CU，超出则失败">CU</span> 消耗，结果保存为 <span class="term" data-tooltip="Parquet：一种列式存储格式，适合大规模数据分析。pmm-sim 把基准数据存成 parquet 方便用 DuckDB 或 Python 查询">parquet</span> 文件，可用 plot.py 可视化。</p>
+      <h3 class="screen-title animate-in">Benchmarks: batch-measure the rate curve</h3>
+      <p class="animate-in">A single swap gives you one price point. <strong>benchmark mode</strong> lets you sweep the whole rate curve — from 1 WSOL to 4,000 WSOL, in steps of 1 WSOL — measuring the rate and <span class="term" data-tooltip="CU: Compute Units. Solana caps each transaction at 1,400,000 CU; exceeding that fails the transaction.">CU</span> usage at every size, and saving results as <span class="term" data-tooltip="Parquet: a columnar storage format great for large-scale data analysis. pmm-sim writes benchmark data as Parquet so it's easy to query with DuckDB or Python.">Parquet</span> files, ready for visualization with plot.py.</p>
 
       <div class="code-block animate-in">
         <div class="code-header">
           <span class="code-lang">bash</span>
-          <span>benchmark 示例</span>
+          <span>benchmark example</span>
         </div>
-        <pre><code><span class="code-comment"># 基准测试：humidifi、tessera、solfi-v2、goonfi</span>
-<span class="code-comment"># 范围 1-4000 WSOL，步长 1 WSOL，伪装为 Jupiter</span>
+        <pre><code><span class="code-comment"># Benchmark: humidifi, tessera, solfi-v2, goonfi</span>
+<span class="code-comment"># Range 1-4000 WSOL, step 1 WSOL, spoofing as Jupiter</span>
 pmm-sim benchmark \
   --pmms=humidifi,tessera,solfi-v2,goonfi \
   --range=1.0,4000.0,1.0 \
   --src-token=wsol --dst-token=usdc \
   --spoof=jupiter \
-  --jit-accounts=false  <span class="code-comment"># 用磁盘缓存的静态账户</span>
+  --jit-accounts=false  <span class="code-comment"># use disk-cached static accounts</span>
 
-<span class="code-comment"># 用 DuckDB 快速查看结果</span>
+<span class="code-comment"># Inspect results quickly with DuckDB</span>
 duckdb -csv \
   -c "SELECT * FROM 'datasets/401101387_jupiter_humidifi_*.parquet'" \
   | column -t -s ,</code></pre>
@@ -218,140 +218,140 @@ duckdb -csv \
         <div class="step-card animate-in">
           <div class="step-number">1</div>
           <div class="step-content">
-            <div class="step-title">初始化 LiteSVM</div>
-            <div class="step-desc">在进程内创建空白虚拟机，注入系统变量和代币 mint，无需启动本地节点。</div>
+            <div class="step-title">Initialize LiteSVM</div>
+            <div class="step-desc">Create a blank in-process VM, inject sysvars and token mints. No local node startup; ready in milliseconds.</div>
           </div>
         </div>
         <div class="step-card animate-in">
           <div class="step-number">2</div>
           <div class="step-content">
-            <div class="step-title">加载程序 + 账户</div>
-            <div class="step-desc">从磁盘缓存（静态模式）或 mainnet RPC（JIT 模式）加载私有 AMM 的 ELF 程序和市场账户。</div>
+            <div class="step-title">Load programs + accounts</div>
+            <div class="step-desc">Load the private AMM's ELF programs and market accounts from a disk cache (static mode) or from mainnet RPC (JIT mode).</div>
           </div>
         </div>
         <div class="step-card animate-in">
           <div class="step-number">3</div>
           <div class="step-content">
-            <div class="step-title">构建伪装指令</div>
-            <div class="step-desc">选择目标聚合器（Jupiter/DFlow/Titan/OKX），构建对应指令鉴别符，替换 program_id。</div>
+            <div class="step-title">Build the spoofed instruction</div>
+            <div class="step-desc">Pick a target aggregator (Jupiter / DFlow / Titan / OKX), build the matching instruction discriminator, and substitute the program_id.</div>
           </div>
         </div>
         <div class="step-card animate-in">
           <div class="step-number">4</div>
           <div class="step-content">
-            <div class="step-title">执行 swap + 重置</div>
-            <div class="step-desc">发送交易到 LiteSVM，读取 SwapEvent 日志获取 amount_out 和 CU，然后重置钱包余额进入下一轮。</div>
+            <div class="step-title">Execute the swap + reset</div>
+            <div class="step-desc">Send the transaction into LiteSVM, read the SwapEvent log for amount_out and CU, then reset wallet balances for the next round.</div>
           </div>
         </div>
         <div class="step-card animate-in">
           <div class="step-number">5</div>
           <div class="step-content">
-            <div class="step-title">写入 Parquet 数据集</div>
-            <div class="step-desc">把每个规模（amount_in）对应的汇率和 CU 存成列式数据，文件名包含 slot 编号和聚合器身份。</div>
+            <div class="step-title">Write a Parquet dataset</div>
+            <div class="step-desc">Persist the rate and CU at each size (amount_in) as columnar data, with filenames including the slot number and aggregator identity.</div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── SCREEN 6: 从 Solana 到 Base ───────────────────────────── -->
+  <!-- ── SCREEN 6: From Solana to Base ───────────────────────────── -->
   <div class="screen">
     <div class="screen-inner">
-      <h3 class="screen-title animate-in">PropAMM 出海：为什么 EVM 之前做不到</h3>
-      <p class="animate-in">pmm-sim 所量化的这套机制——实时报价、身份识别、私有汇率——是 Solana 特有的产物。当同样的逻辑遇到以太坊的基础设施，会撞上一堵墙。</p>
+      <h3 class="screen-title animate-in">PropAMMs go cross-chain: why EVM couldn't do this before</h3>
+      <p class="animate-in">The mechanics pmm-sim quantifies — real-time quoting, identity recognition, private rates — are a uniquely Solana phenomenon. When the same logic meets Ethereum's infrastructure, it hits a wall.</p>
 
       <div class="stagger-children pattern-grid animate-in" style="margin-top: var(--space-8); grid-template-columns: 1fr 1fr;">
         <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1);">
-          <div class="pattern-card-title">Solana — 为什么能</div>
+          <div class="pattern-card-title">Solana — why it works</div>
           <div class="pattern-card-desc">
-            <p><strong>无公开 mempool</strong>：交易直接发给领导者，做市商更新报价前没有人能抢跑。</p>
-            <p style="margin-top:var(--space-2);"><strong>微交易成本极低</strong>：每笔报价更新几乎免费，每秒可更新数百次而不亏损。</p>
-            <p style="margin-top:var(--space-2);"><strong>Jito 优先通道</strong>：高价值交易可以买到确定性的区块排序，MEV 可预测。</p>
+            <p><strong>No public mempool</strong>: transactions go straight to the leader, so no one can front-run a market maker's quote update.</p>
+            <p style="margin-top:var(--space-2);"><strong>Tiny per-transaction cost</strong>: each quote update is nearly free, so a market maker can update hundreds of times per second without losing money.</p>
+            <p style="margin-top:var(--space-2);"><strong>Jito priority lanes</strong>: high-value transactions can buy deterministic block ordering, making MEV predictable.</p>
           </div>
         </div>
         <div class="pattern-card animate-in" style="border-top: 3px solid #E05C5C;">
-          <div class="pattern-card-title">EVM — 为什么难</div>
+          <div class="pattern-card-title">EVM — why it's hard</div>
           <div class="pattern-card-desc">
-            <p><strong>公开 mempool = 毒流量</strong>：套利者看到你的报价更新交易，可以在同一区块里抢先执行。每次更新都是暴露。</p>
-            <p style="margin-top:var(--space-2);"><strong>更新成本高</strong>：以太坊 gas 费让高频报价更新经济上不可行。</p>
-            <p style="margin-top:var(--space-2);"><strong>状态更新延迟</strong>：12 秒出块周期让"实时"报价实为历史数据。</p>
+            <p><strong>Public mempool = toxic flow</strong>: arbitrageurs see your quote-update transaction and can front-run it in the same block. Every update is an exposure.</p>
+            <p style="margin-top:var(--space-2);"><strong>Update cost is high</strong>: Ethereum gas makes high-frequency quote updates economically unviable.</p>
+            <p style="margin-top:var(--space-2);"><strong>State update latency</strong>: a 12-second block time means "real-time" quotes are actually historical data.</p>
           </div>
         </div>
       </div>
 
       <div class="callout callout-accent animate-in" style="margin-top: var(--space-8);">
-        <div class="callout-title">BaiBai：第一个把 PropAMM 带到 Base 的平台</div>
-        <p>2025 年，BaiBai（基于 Spire Labs 的 <span class="term" data-tooltip="Pylon：Spire Labs 开发的 Base 链区块空间专属通道，允许做市商预订排在每个区块最顶部的位置，同时对有毒流量设置速度保护">Pylon</span> 构建）提出了一套破局方案，让 PropAMM 的经济模型在 EVM 上首次成立：</p>
+        <div class="callout-title">BaiBai: the first platform to bring PropAMMs to Base</div>
+        <p>In 2025, BaiBai (built on Spire Labs' <span class="term" data-tooltip="Pylon: Spire Labs' dedicated block-space lane on Base. Lets market makers reserve top-of-block positions while applying speed protection against toxic flow.">Pylon</span>) proposed a solution that makes PropAMM economics viable on EVM for the first time:</p>
         <div class="stagger-children" style="margin-top: var(--space-5);">
           <div class="step-card animate-in" style="margin-bottom: var(--space-3);">
             <div class="step-number">①</div>
             <div class="step-content">
-              <div class="step-title">做市商专属区块空间</div>
-              <div class="step-desc">报价更新交易保证排在每个区块最顶部——做市商更新报价时，不会被套利者在同一区块内抢跑。</div>
+              <div class="step-title">Dedicated block space for market makers</div>
+              <div class="step-desc">Quote-update transactions are guaranteed to land at the top of each block — market makers can update without being front-run inside the same block.</div>
             </div>
           </div>
           <div class="step-card animate-in" style="margin-bottom: var(--space-3);">
             <div class="step-number">②</div>
             <div class="step-content">
-              <div class="step-title">对毒流量设置速度限制</div>
-              <div class="step-desc">检测到已知套利地址后，自动添加小延迟（speed bump），让做市商有窗口先撤销旧报价。</div>
+              <div class="step-title">Speed bumps for toxic flow</div>
+              <div class="step-desc">Known arbitrage addresses get an automatic small delay (a speed bump), giving market makers a window to cancel stale quotes first.</div>
             </div>
           </div>
           <div class="step-card animate-in" style="margin-bottom: var(--space-3);">
             <div class="step-number">③</div>
             <div class="step-content">
-              <div class="step-title">同步可组合性 + 智能路由</div>
-              <div class="step-desc">与 Base 原生同步组合，无需跨链桥。未被 BaiBai 填满的大额 swap 自动回退到公开流动性（外部 AMM），避免流动性碎片化。</div>
+              <div class="step-title">Synchronous composability + smart routing</div>
+              <div class="step-desc">Composes natively with Base — no cross-chain bridge required. Large swaps not fully filled by BaiBai fall back automatically to public liquidity (external AMMs), avoiding liquidity fragmentation.</div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="callout callout-info animate-in" style="margin-top: var(--space-6);">
-        <div class="callout-title">为什么这对你重要</div>
-        <p>pmm-sim 目前只测量 Solana 上的私有 AMM。但它所量化的<strong>身份敏感定价</strong>范式，正在成为多链 DeFi 的基础设施。理解 CPI 伪装、优惠档汇率、基准数据格式——这些知识在 BaiBai、在未来的 EVM PropAMM 上都会再次出现。</p>
+        <div class="callout-title">Why this matters to you</div>
+        <p>pmm-sim today only measures Solana's private AMMs. But the <strong>identity-sensitive pricing</strong> paradigm it quantifies is becoming the foundation of multi-chain DeFi. Understanding CPI spoofing, preferred-rate tiers, and benchmark data formats — these will show up again on BaiBai, and on future EVM PropAMMs.</p>
       </div>
     </div>
   </div>
 
-  <!-- ── SCREEN 7: 测验 ───────────────────────────────────────── -->
+  <!-- ── SCREEN 7: Quiz ───────────────────────────────────────── -->
   <div class="screen">
     <div class="screen-inner">
-      <h3 class="screen-title animate-in">检验你的理解</h3>
-      <p class="animate-in">三道场景题。</p>
+      <h3 class="screen-title animate-in">Check your understanding</h3>
+      <p class="animate-in">Three scenario questions.</p>
 
       <div class="quiz-container animate-in" id="quiz-module7">
 
         <div class="quiz-question active" data-index="0">
-          <p class="quiz-q-text">你用 pmm-sim 测试 HumidiFi：直接调用拿到 97.82 WSOL，伪装成 Jupiter 拿到 98.41 WSOL。你的套利机器人应该怎么做？</p>
+          <p class="quiz-q-text">You used pmm-sim against HumidiFi: a direct call returned 97.82 WSOL; spoofed as Jupiter, 98.41 WSOL. What should your arbitrage bot do?</p>
           <div class="quiz-options">
-            <button class="quiz-option" data-correct="false" data-explanation="直接发 Jupiter 交易可以，但这不是 pmm-sim 的发现意义——你发现的是你的机器人应该通过 Jupiter 路由（或拿到 Jupiter 的白名单资格），而不是直接调用 HumidiFi。">直接向 HumidiFi 发一笔 Jupiter 签名的交易</button>
-            <button class="quiz-option" data-correct="true" data-explanation="正确。你的机器人应该通过 Jupiter 路由到 HumidiFi，或者申请成为 HumidiFi 的白名单聚合器，才能持续享受优惠档汇率。直接调用 = 普通档 = 每次少拿 0.59 WSOL。">优先通过 Jupiter 路由 HumidiFi，或申请白名单聚合器资格</button>
-            <button class="quiz-option" data-correct="false" data-explanation="不对。pmm-sim 只是测量工具，并没有修改链上合约，优惠汇率来自合约内部的身份检查逻辑。">把 pmm-sim 的伪装代码部署到 mainnet</button>
+            <button class="quiz-option" data-correct="false" data-explanation="Sending a Jupiter-signed transaction directly would work, but that's not pmm-sim's real finding — what you found is that your bot should route through Jupiter (or get whitelisted by HumidiFi), not call directly.">Send HumidiFi a transaction signed by Jupiter</button>
+            <button class="quiz-option" data-correct="true" data-explanation="Right. Your bot should route via Jupiter to HumidiFi, or apply to become a HumidiFi whitelisted aggregator, so it consistently gets the preferred rate. Direct call = regular tier = 0.59 WSOL less every trade.">Route through Jupiter to reach HumidiFi, or apply for whitelisted aggregator status</button>
+            <button class="quiz-option" data-correct="false" data-explanation="No. pmm-sim is a measurement tool, it doesn't modify on-chain contracts. The preferred rate comes from identity-checking logic inside the contract itself.">Deploy pmm-sim's spoofing code to mainnet</button>
           </div>
-          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module7', 0)">检查答案</button>
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module7', 0)">Check answer</button>
           <div class="quiz-feedback"></div>
         </div>
 
         <div class="quiz-question" data-index="1">
-          <p class="quiz-q-text">pmm-sim 的 --jit-accounts=true 和 --jit-accounts=false 有什么实质区别？</p>
+          <p class="quiz-q-text">What's the actual difference between pmm-sim's --jit-accounts=true and --jit-accounts=false?</p>
           <div class="quiz-options">
-            <button class="quiz-option" data-correct="false" data-explanation="不对。JIT 模式下账户是实时从 mainnet 拉取的，反映当前价格；静态模式用的是缓存快照，反映的是快照时刻的价格。">false 模式更准确，因为它避免了网络延迟</button>
-            <button class="quiz-option" data-correct="false" data-explanation="并非如此。两种模式都在本地 LiteSVM 里运行，都不消耗 mainnet gas。区别在于账户状态的新鲜度。">true 模式会消耗 mainnet 的 gas</button>
-            <button class="quiz-option" data-correct="true" data-explanation="正确。true（JIT）模式从 mainnet 实时拉取账户，反映当前池子状态和汇率；false（静态）模式用磁盘缓存，速度更快，适合离线重复测试，但汇率反映的是缓存时刻。两种都在本地 LiteSVM 执行，不花 gas。">true 用 mainnet 实时状态（数据新），false 用磁盘缓存（速度快）</button>
+            <button class="quiz-option" data-correct="false" data-explanation="No. JIT mode pulls accounts live from mainnet and reflects current prices; static mode uses a cached snapshot reflecting the snapshot's moment in time. The accuracy story is the other way around.">false mode is more accurate because it avoids network latency</button>
+            <button class="quiz-option" data-correct="false" data-explanation="Not the case. Both modes run inside the local LiteSVM and neither consumes mainnet gas. The difference is the freshness of the account state.">true mode consumes mainnet gas</button>
+            <button class="quiz-option" data-correct="true" data-explanation="Right. true (JIT) mode pulls account state live from mainnet, reflecting current pool state and rates. false (static) mode uses a disk cache — faster, ideal for repeatable offline tests, but the rates reflect the cached moment. Both run in local LiteSVM with no gas cost.">true uses live mainnet state (fresher data); false uses a disk cache (faster)</button>
           </div>
-          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module7', 1)">检查答案</button>
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module7', 1)">Check answer</button>
           <div class="quiz-feedback"></div>
         </div>
 
         <div class="quiz-question" data-index="2">
-          <p class="quiz-q-text">pmm-sim 的基准数据显示：当 swap 金额超过 500 WSOL 时，HumidiFi 和 SolFiV2 的汇率曲线开始发散——HumidiFi 的汇率快速恶化，SolFiV2 保持稳定。对于一个大额 MEV 机器人，这意味着什么？</p>
+          <p class="quiz-q-text">pmm-sim benchmark data shows that beyond 500 WSOL, HumidiFi's and SolFiV2's rate curves diverge — HumidiFi degrades quickly, SolFiV2 stays stable. For a large MEV bot, what does this mean?</p>
           <div class="quiz-options">
-            <button class="quiz-option" data-correct="false" data-explanation="未必。HumidiFi 可能对小额兑换（&lt;500 WSOL）有更好的汇率，应该拆单并路由到不同 AMM，而不是完全放弃。">完全放弃 HumidiFi，只用 SolFiV2</button>
-            <button class="quiz-option" data-correct="true" data-explanation="正确。这正是多路由的价值：把大额 swap 拆分，500 WSOL 以内走 HumidiFi（汇率好），超出部分走 SolFiV2（深度稳定）。pmm-sim 的 multi 模式专门支持这种拆分基准测试。">拆分路由：500 WSOL 以内走 HumidiFi，超出部分走 SolFiV2</button>
-            <button class="quiz-option" data-correct="false" data-explanation="不是。汇率恶化是流动性深度（liquidity depth）问题，与 JIT 模式无关。同样的池子状态，无论 JIT 还是静态，超过 500 WSOL 都会出现滑点恶化。">切换到 JIT 模式可以解决汇率恶化问题</button>
+            <button class="quiz-option" data-correct="false" data-explanation="Not necessarily. HumidiFi may give better rates on small swaps (&lt;500 WSOL); split orders and route to different AMMs rather than abandoning HumidiFi entirely.">Drop HumidiFi entirely and only use SolFiV2</button>
+            <button class="quiz-option" data-correct="true" data-explanation="Right. This is the value of multi-routing: split large swaps — send up to 500 WSOL to HumidiFi (better rate) and the rest to SolFiV2 (deeper, more stable). pmm-sim's multi mode is built for exactly this kind of split-benchmark.">Split-route: send up to 500 WSOL to HumidiFi and the rest to SolFiV2</button>
+            <button class="quiz-option" data-correct="false" data-explanation="No. Rate degradation is a liquidity-depth issue, unrelated to JIT mode. Same pool state, JIT or static — beyond 500 WSOL you'll still see slippage worsen.">Switching to JIT mode will fix the rate degradation</button>
           </div>
-          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module7', 2)">检查答案</button>
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module7', 2)">Check answer</button>
           <div class="quiz-feedback"></div>
         </div>
 
