@@ -1,18 +1,18 @@
-# Solana 极速解密 / Solana Speed Demons
+# Solana Speed Demons
 
 An interactive single-page course on **Solana validator internals at wire speed** — how Firedancer, Samba, Delorean, and pmm-sim each carve a different optimization out of the 400ms slot. Self-contained HTML, no framework.
 
-中文教程，7 章，从验证节点的全貌一路深入到私有 AMM 解剖：
+Seven modules, from a top-down view of the validator all the way down to dissecting a private AMM:
 
 | # | Module | Topic |
 |---|---|---|
-| 01 | 验证节点 | The Validator |
-| 02 | Firedancer：C 语言引擎 | Firedancer — the C engine |
-| 03 | 交易的旅程 | Transaction journey |
-| 04 | Samba：极速 MEV | Samba — MEV at wire speed |
-| 05 | Delorean：时光机 | Delorean — the time machine |
-| 06 | 全局视野 | The bigger picture |
-| 07 | pmm-sim：私有 AMM 解剖 | pmm-sim — private AMM dissected |
+| 01 | The Validator | The Validator |
+| 02 | Firedancer — the C engine | Firedancer — the C engine |
+| 03 | Transaction journey | Transaction journey |
+| 04 | Samba — MEV at wire speed | Samba — MEV at wire speed |
+| 05 | Delorean — the time machine | Delorean — the time machine |
+| 06 | The bigger picture | The bigger picture |
+| 07 | pmm-sim — private AMM dissected | pmm-sim — private AMM dissected |
 
 Companion long-form essay: [aileena.xyz/blog/wire-speed](https://aileena.xyz/blog/wire-speed)
 

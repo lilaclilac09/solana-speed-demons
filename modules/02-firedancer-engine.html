@@ -3,44 +3,45 @@
 
     <header class="module-header animate-in">
       <span class="module-number">02</span>
-      <h1 class="module-title">Firedancer：C 语言打造的极速引擎</h1>
-      <p class="module-subtitle">Jump Crypto 如何借鉴芯片制造工程理念、从零构建 validator：一个 CPU 核心，一项任务，零共享工具。</p>
+      <h1 class="module-title">Firedancer: A Wire-Speed Engine in C</h1>
+      <p class="module-subtitle">How Jump Crypto rebuilt the validator from scratch, borrowing semiconductor-fab thinking: one CPU core, one job, zero shared tools.</p>
     </header>
 
     <div class="module-body">
 
       <!-- ===================== SCREEN 1: WHY C? ===================== -->
       <section class="screen animate-in">
-        <h2 class="screen-heading">为什么选择 C？</h2>
+        <h2 class="screen-heading">Why C?</h2>
 
         <p class="screen-lead">
-          Jump Crypto 使用与其
-          <span class="term" data-definition="高频交易（HFT）是一种通过算法每秒执行数千笔订单的金融交易方式。哪怕一微秒的延迟，也可能决定盈亏。">高频交易</span>
-          系统相同的工程理念编写了
-          <span class="term" data-definition="Firedancer 是 Jump Crypto 从零开始重新实现的 Solana validator——负责处理交易、参与共识的核心软件。完全用 C 语言编写。">Firedancer</span>：
-          一切用
-          <span class="term" data-definition="C 是一门底层编程语言，让你直接掌控内存与硬件。没有自动内存管理——你来决定每一个字节的分配与释放时机。">C</span>
-          编写，掌控每一个字节，绝不留有偶然。
+          Jump Crypto wrote
+          <span class="term" data-definition="Firedancer is Jump Crypto's from-scratch reimplementation of the Solana validator — the core software that processes transactions and participates in consensus. Written entirely in C.">Firedancer</span>
+          using the same engineering philosophy as their
+          <span class="term" data-definition="High-frequency trading (HFT) is a style of algorithmic finance where systems execute thousands of orders per second. A single microsecond of latency can determine profit or loss.">high-frequency trading</span>
+          systems: everything in
+          <span class="term" data-definition="C is a low-level programming language that gives you direct control over memory and hardware. There's no automatic memory management — you decide when every byte is allocated and freed.">C</span>,
+          control over every byte, nothing left to chance.
         </p>
 
         <div class="pattern-cards animate-in" style="grid-template-columns: 1fr 1fr; margin: var(--space-6) 0;">
           <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
             <div class="pattern-icon" style="background: var(--color-actor-1)">⚡</div>
-            <h4 class="pattern-title">无垃圾回收器</h4>
+            <h4 class="pattern-title">No garbage collector</h4>
             <p class="pattern-desc">
-              <span class="term" data-definition="垃圾回收器是 Java、Go、Python 等语言的运行时特性，会自动释放不再使用的内存。但代价是：它会在不可预知的时刻暂停程序——有时长达数毫秒。">垃圾回收器</span>
-              会在不可预知的时刻暂停程序执行。
-              在 HFT 场景下，哪怕一毫秒的暂停也意味着真实的金钱损失。
-              C 没有垃圾回收器——你精确掌控内存。
+              A
+              <span class="term" data-definition="A garbage collector is a runtime feature in languages like Java, Go, and Python that automatically frees unused memory. The cost: it pauses your program at unpredictable moments — sometimes for milliseconds.">garbage collector</span>
+              pauses your program at unpredictable moments.
+              In HFT, even a millisecond pause means real money lost.
+              C has no GC — you control memory precisely.
             </p>
           </div>
           <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
             <div class="pattern-icon" style="background: var(--color-actor-2)">🎯</div>
-            <h4 class="pattern-title">可预测的性能</h4>
+            <h4 class="pattern-title">Predictable performance</h4>
             <p class="pattern-desc">
-              <span class="term" data-definition="Rust 是一门现代系统编程语言，在编译期强制保证内存安全。它没有垃圾回收器，但其安全抽象有时会引入 Firedancer 希望避免的额外开销。">Rust</span>
-              提供内存安全保证，但其抽象层可能引入隐性开销。
-              C 编译后与你所写的代码一一对应——每次都达到纳秒级的可预测性。
+              <span class="term" data-definition="Rust is a modern systems programming language that enforces memory safety at compile time. It has no GC, but its safety abstractions can sometimes introduce overhead that Firedancer wants to avoid.">Rust</span>
+              gives memory-safety guarantees, but its abstractions can introduce hidden overhead.
+              C compiles to exactly what you wrote — nanosecond-level predictability, every time.
             </p>
           </div>
         </div>
@@ -48,12 +49,12 @@
         <div class="callout callout-info animate-in">
           <div class="callout-icon">🔍</div>
           <div class="callout-content">
-            <strong class="callout-title">独立押注</strong>
+            <strong class="callout-title">An independent bet</strong>
             <p>
-              Firedancer 完全从零编写，与现有的
-              <span class="term" data-definition="Agave（前身为 Solana Labs validator）是原始的 Solana validator 客户端，用 Rust 编写，是当前主网最主流的客户端。">Agave validator</span>
-              没有任何共享代码（Agave 用 Rust 编写）。这意味着 Agave 实现中的 bug 不会影响 Firedancer——反之亦然。
-              这就是"客户端多样性"的本质定义。
+              Firedancer is written from scratch and shares no code with the existing
+              <span class="term" data-definition="Agave (formerly the Solana Labs validator) is the original Solana validator client, written in Rust. It's the dominant client on mainnet today.">Agave validator</span>
+              (Agave is written in Rust). That means a bug in Agave's implementation can't affect Firedancer — and vice versa.
+              This is "client diversity" by definition.
             </p>
           </div>
         </div>
@@ -61,63 +62,64 @@
 
       <!-- ===================== SCREEN 2: TILES ===================== -->
       <section class="screen animate-in">
-        <h2 class="screen-heading">Tile：一个核心，一项任务</h2>
+        <h2 class="screen-heading">Tiles: one core, one job</h2>
 
         <p>
-          <strong>tile</strong> 是绑定到单个
-          <span class="term" data-definition="CPU 核心是现代处理器芯片内部的独立计算单元。一颗 32 核 CPU 可以同时运行 32 个线程——每个线程独占一个核心，互不共享。">CPU 核心</span>
-          上的单线程，只做一件事。
-          <span class="term" data-definition="NIC（网络接口卡）是连接服务器与网络的硬件组件。在 Firedancer 中，NIC tile 位于流水线的最前端，直接从网线上接收原始数据包。">NIC</span>
-          tile 负责接收数据包。
-          SigVerify tile 负责验证签名。
-          Pack tile 负责筛选哪些交易进入区块。
-          各 tile 之间从不直接共享内存——如同芯片制造流水线上的各个工位。
+          A <strong>tile</strong> is a single thread pinned to one
+          <span class="term" data-definition="A CPU core is an independent compute unit inside a modern processor chip. A 32-core CPU can run 32 threads simultaneously — each one on its own core, no sharing.">CPU core</span>,
+          doing one thing.
+          The
+          <span class="term" data-definition="NIC (Network Interface Card) is the hardware component that connects a server to the network. In Firedancer, the NIC tile sits at the front of the pipeline, receiving raw packets straight off the wire.">NIC</span>
+          tile receives packets.
+          The SigVerify tile checks signatures.
+          The Pack tile picks which transactions go into the block.
+          Tiles never share memory directly with each other — like stations on a semiconductor-fab assembly line.
         </p>
 
         <div class="file-tree animate-in" style="margin: var(--space-6) 0; background: var(--color-surface); border-radius: var(--radius-md); padding: var(--space-6); box-shadow: var(--shadow-md);">
           <div class="ft-folder open">
             <span class="ft-name">src/</span>
-            <span class="ft-desc">Firedancer 源码根目录</span>
+            <span class="ft-desc">Firedancer source root</span>
             <div class="ft-children">
               <div class="ft-folder">
                 <span class="ft-name">tango/</span>
-                <span class="ft-desc">神经系统。所有 tile 通过环形缓冲区在此通信。</span>
+                <span class="ft-desc">The nervous system. All tiles talk through ring buffers here.</span>
               </div>
               <div class="ft-folder">
                 <span class="ft-name">ballet/</span>
-                <span class="ft-desc">数学库。SHA-256、ed25519、base58——全部从零实现。</span>
+                <span class="ft-desc">Math library. SHA-256, ed25519, base58 — all from scratch.</span>
               </div>
               <div class="ft-folder">
                 <span class="ft-name">disco/</span>
-                <span class="ft-desc">通用流水线 tile：QUIC、SigVerify、Dedup、Pack。</span>
+                <span class="ft-desc">Common pipeline tiles: QUIC, SigVerify, Dedup, Pack.</span>
               </div>
               <div class="ft-folder">
                 <span class="ft-name">discof/</span>
-                <span class="ft-desc">完整 Firedancer tile：共识、RPC、回放，无 Agave 依赖。</span>
+                <span class="ft-desc">Full Firedancer tiles: consensus, RPC, replay — no Agave dependency.</span>
               </div>
               <div class="ft-folder">
                 <span class="ft-name">discoh/</span>
-                <span class="ft-desc">Frankendancer tile：通往 Agave 执行层的桥接路径（混合模式）。</span>
+                <span class="ft-desc">Frankendancer tiles: bridge path into Agave's execution layer (hybrid mode).</span>
               </div>
               <div class="ft-folder">
                 <span class="ft-name">flamenco/</span>
-                <span class="ft-desc">Solana 运行时。程序在 SVM 上实际执行的地方。</span>
+                <span class="ft-desc">The Solana runtime. Where programs actually execute on the SVM.</span>
               </div>
               <div class="ft-folder">
                 <span class="ft-name">funk/</span>
-                <span class="ft-desc">账户数据库：支持分叉感知的内存键值存储。</span>
+                <span class="ft-desc">Account database: fork-aware in-memory key-value store.</span>
               </div>
               <div class="ft-folder">
                 <span class="ft-name">waltz/</span>
-                <span class="ft-desc">QUIC 之下的网络层——原始 UDP 与内核旁路。</span>
+                <span class="ft-desc">Network layer beneath QUIC — raw UDP and kernel bypass.</span>
               </div>
               <div class="ft-folder">
                 <span class="ft-name">wiredancer/</span>
-                <span class="ft-desc">FPGA 加速模块——未来的硬件加速路径。</span>
+                <span class="ft-desc">FPGA acceleration module — the future hardware-accel path.</span>
               </div>
               <div class="ft-folder">
                 <span class="ft-name">util/</span>
-                <span class="ft-desc">C 环境基础设施：内存分配器、数据结构、数学原语。</span>
+                <span class="ft-desc">C-environment foundation: memory allocators, data structures, math primitives.</span>
               </div>
             </div>
           </div>
@@ -126,12 +128,13 @@
         <div class="callout callout-accent animate-in">
           <div class="callout-icon">💡</div>
           <div class="callout-content">
-            <strong class="callout-title">芯片制造工厂的比喻</strong>
+            <strong class="callout-title">The semiconductor-fab analogy</strong>
             <p>
-              把每个 tile 想象成半导体流水线上的专属工位。
-              没有工位会借用另一工位的工具，没有工位需要等待另一工位完成。
-              工件在传送带（即
-              <span class="term" data-definition="环形缓冲区是内存中固定大小的循环队列。写指针到达末尾时回绕到起点，实现持续数据流，无需任何内存分配或释放操作。">环形缓冲区</span>）上到来，完成处理，继续传递——速度与网线一致。
+              Think of each tile as a dedicated station on a semiconductor fab line.
+              No station borrows another's tools; no station has to wait for another to finish.
+              Work pieces arrive on the conveyor belt (the
+              <span class="term" data-definition="A ring buffer is a fixed-size circular queue in memory. When the write pointer hits the end, it wraps to the start — enabling continuous data flow with no memory allocation or deallocation.">ring buffer</span>),
+              get processed, and pass on — at wire speed.
             </p>
           </div>
         </div>
@@ -139,18 +142,19 @@
 
       <!-- ===================== SCREEN 3: TANGO ===================== -->
       <section class="screen animate-in">
-        <h2 class="screen-heading">Tango：Tile 的神经系统</h2>
+        <h2 class="screen-heading">Tango: the nervous system between tiles</h2>
 
         <p>
-          各 tile 之间从不通过相互调用来传递数据。
-          NIC tile 将原始交易字节写入共享内存区域，并更新
-          <span class="term" data-definition="环形缓冲区是存储在内存中的固定大小循环队列。一个写者推进写指针，读者各自推进自己的读指针。无需加锁——读者只需跟随写者的步伐。">环形缓冲区</span>
-          条目。
-          下游 tile 从同一块内存中读取数据——无需拷贝，无需
-          <span class="term" data-definition="锁（或互斥量）是一种强制线程轮流访问共享数据的机制。加锁虽然正确，但很慢——当一个线程持有锁时，所有其他线程都必须等待。Tango 完全避免了锁的使用。">锁</span>，
-          无需等待。
-          这是为纳秒级吞吐量而设计的
-          <span class="term" data-definition="IPC 即进程间通信——任何让独立线程或进程共享数据的机制。Tango 是 Firedancer 自研的 IPC 系统，完全不使用锁。">IPC</span>。
+          Tiles never pass data by calling each other.
+          The NIC tile writes raw transaction bytes into a shared memory region and updates a
+          <span class="term" data-definition="A ring buffer is a fixed-size circular queue stored in memory. A writer advances the write pointer; readers each advance their own read pointers. No locking needed — readers just keep up with the writer.">ring buffer</span>
+          entry.
+          Downstream tiles read from the same memory — no copy, no
+          <span class="term" data-definition="A lock (or mutex) is a mechanism that forces threads to take turns accessing shared data. Locking is correct but slow — while one thread holds the lock, all others must wait. Tango avoids locks entirely.">lock</span>,
+          no waiting.
+          This is
+          <span class="term" data-definition="IPC stands for inter-process communication — any mechanism that lets independent threads or processes share data. Tango is Firedancer's home-grown IPC, designed without locks.">IPC</span>
+          designed for nanosecond throughput.
         </p>
 
         <div class="pattern-cards animate-in stagger-children" style="grid-template-columns: repeat(2, 1fr); margin: var(--space-6) 0;">
@@ -158,37 +162,37 @@
             <div class="pattern-icon" style="background: var(--color-actor-1)">🗂️</div>
             <h4 class="pattern-title">mcache</h4>
             <p class="pattern-desc">
-              <strong>元数据缓存。</strong>
-              一个循环的"信封"环——每条条目描述一笔交易（其大小、在内存中的位置以及哈希值），而不包含数据本身。
-              写者在每个信封上盖章；读者扫描环形结构寻找新的印记。
+              <strong>Metadata cache.</strong>
+              A circular ring of "envelopes" — each entry describes a transaction (its size, where it lives in memory, its hash) but not the data itself.
+              The writer stamps each envelope; readers scan the ring for new stamps.
             </p>
           </div>
           <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
             <div class="pattern-icon" style="background: var(--color-actor-2)">📦</div>
             <h4 class="pattern-title">dcache</h4>
             <p class="pattern-desc">
-              <strong>数据缓存。</strong>
-              实际的交易字节。一次性存储在共享内存中。
-              所有 tile 从同一位置读取——永远不会产生拷贝。
-              就像一块公告板，所有人都能阅读，无需各自复印一份。
+              <strong>Data cache.</strong>
+              The actual transaction bytes. Stored once in shared memory.
+              All tiles read from the same location — no copies are ever made.
+              Like a bulletin board: everyone reads it, nobody needs their own photocopy.
             </p>
           </div>
           <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
             <div class="pattern-icon" style="background: var(--color-actor-3)">🎟️</div>
             <h4 class="pattern-title">fseq</h4>
             <p class="pattern-desc">
-              <strong>流序列器。</strong>
-              一个取号计数器。即使多个 NIC tile 同时写入，也能确保各 tile 按正确顺序读取消息。
-              就像熟食柜台的"当前服务号"显示屏。
+              <strong>Flow sequencer.</strong>
+              A take-a-number counter. Even when multiple NIC tiles write at once, tiles read messages in the right order.
+              Like the "now serving" sign at a deli counter.
             </p>
           </div>
           <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
             <div class="pattern-icon" style="background: var(--color-actor-4)">🚦</div>
             <h4 class="pattern-title">fctl</h4>
             <p class="pattern-desc">
-              <strong>流量控制。</strong>
-              一个背压信号。如果下游 tile 处理速度跟不上，fctl 会通知上游 tile 降速，而非溢出环形缓冲区。
-              就像高速公路拥堵时拦截来车的交通灯。
+              <strong>Flow control.</strong>
+              A backpressure signal. If downstream tiles can't keep up, fctl tells upstream tiles to slow down instead of overflowing the ring buffer.
+              Like a traffic light stopping cars when the highway jams.
             </p>
           </div>
         </div>
@@ -196,15 +200,15 @@
 
       <!-- ===================== SCREEN 4: FRANKENDANCER vs FULL ===================== -->
       <section class="screen animate-in">
-        <h2 class="screen-heading">Frankendancer 与完整版 Firedancer</h2>
+        <h2 class="screen-heading">Frankendancer vs. full Firedancer</h2>
 
         <p>
-          Firedancer 从同一代码库中衍生出两个
-          <span class="term" data-definition="validator 是参与区块链网络的服务器，负责处理交易、对区块投票，并协助确定哪条链是权威链。Solana 要求 validator 持续以高性能运行。">validator</span>。
-          <strong>Frankendancer</strong> 已在
-          <span class="term" data-definition="主网是 Solana 的正式生产网络，真实代币具有真实价值。与测试网或开发网不同，后两者是练习环境。">主网</span>
-          上线。
-          <strong>完整版 Firedancer</strong> 仍在开发中。
+          Firedancer ships two
+          <span class="term" data-definition="A validator is a server participating in the blockchain network — processing transactions, voting on blocks, helping decide which chain is canonical. Solana requires validators to run continuously at high performance.">validators</span>
+          out of the same codebase.
+          <strong>Frankendancer</strong> is live on
+          <span class="term" data-definition="Mainnet is Solana's production network — real tokens, real value. Unlike testnet or devnet, which are practice environments.">mainnet</span>.
+          <strong>Full Firedancer</strong> is still in development.
         </p>
 
         <div class="pattern-cards animate-in" style="grid-template-columns: 1fr 1fr; margin: var(--space-6) 0;">
@@ -215,22 +219,22 @@
               <div class="step-card">
                 <div class="step-num" style="background: var(--color-actor-3); font-size: var(--text-xs);">✓</div>
                 <div class="step-body">
-                  <strong>Firedancer 网络层 + 区块生产</strong>
-                  <p>disco/ tile 负责数据入口、sigverify、dedup 和 pack。</p>
+                  <strong>Firedancer networking + block production</strong>
+                  <p>disco/ tiles handle ingress, sigverify, dedup, and pack.</p>
                 </div>
               </div>
               <div class="step-card">
                 <div class="step-num" style="background: var(--color-actor-3); font-size: var(--text-xs);">✓</div>
                 <div class="step-body">
-                  <strong>执行层与共识层使用 Agave</strong>
-                  <p>discoh/ tile 桥接至 Agave 的 Rust 运行时，处理复杂逻辑。</p>
+                  <strong>Execution and consensus via Agave</strong>
+                  <p>discoh/ tiles bridge into Agave's Rust runtime for the complex parts.</p>
                 </div>
               </div>
               <div class="step-card">
                 <div class="step-num" style="background: var(--color-actor-3); font-size: var(--text-xs);">🚀</div>
                 <div class="step-body">
-                  <strong>今日已在主网运行</strong>
-                  <p>可以把它理解为混合动力汽车：高速公路上用电动机，复杂工况用内燃机。</p>
+                  <strong>Live on mainnet today</strong>
+                  <p>Think of it as a hybrid car: electric motor on the highway, combustion engine for the complicated bits.</p>
                 </div>
               </div>
             </div>
@@ -238,27 +242,27 @@
 
           <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
             <div class="pattern-icon" style="background: var(--color-actor-1)">🔥</div>
-            <h4 class="pattern-title">完整版 Firedancer</h4>
+            <h4 class="pattern-title">Full Firedancer</h4>
             <div class="step-cards" style="margin-top: var(--space-4);">
               <div class="step-card">
                 <div class="step-num" style="background: var(--color-actor-1); font-size: var(--text-xs);">🎯</div>
                 <div class="step-body">
-                  <strong>100% Firedancer，零 Agave 依赖</strong>
-                  <p>flamenco/ 负责执行，choreo 负责共识，discof/ 负责全部其余部分。</p>
+                  <strong>100% Firedancer, zero Agave dependency</strong>
+                  <p>flamenco/ handles execution, choreo runs consensus, discof/ does the rest.</p>
                 </div>
               </div>
               <div class="step-card">
                 <div class="step-num" style="background: var(--color-actor-1); font-size: var(--text-xs);">⏳</div>
                 <div class="step-body">
-                  <strong>尚未上主网</strong>
-                  <p>仍在开发中——一旦上线，将成为首个真正独立的 Solana validator。</p>
+                  <strong>Not yet on mainnet</strong>
+                  <p>Still in development — once it lands, it'll be the first truly independent Solana validator.</p>
                 </div>
               </div>
               <div class="step-card">
                 <div class="step-num" style="background: var(--color-actor-1); font-size: var(--text-xs);">🛡️</div>
                 <div class="step-body">
-                  <strong>真正的客户端多样性</strong>
-                  <p>Agave 的 bug 不会影响完整版 Firedancer——两者完全不共享任何执行代码。</p>
+                  <strong>True client diversity</strong>
+                  <p>An Agave bug can't affect full Firedancer — they share none of the execution code.</p>
                 </div>
               </div>
             </div>
@@ -266,25 +270,25 @@
         </div>
 
         <div class="file-tree animate-in" style="background: var(--color-surface); border-radius: var(--radius-md); padding: var(--space-5); box-shadow: var(--shadow-sm);">
-          <p style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted); margin: 0 0 var(--space-3); text-transform: uppercase; letter-spacing: 0.08em;">源码树中的桥接层</p>
+          <p style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted); margin: 0 0 var(--space-3); text-transform: uppercase; letter-spacing: 0.08em;">The bridge layer in the source tree</p>
           <div class="ft-folder">
             <span class="ft-name">discoh/</span>
-            <span class="ft-desc">Frankendancer：这些 tile 将 Firedancer 网络层桥接至 Agave 执行引擎</span>
+            <span class="ft-desc">Frankendancer: these tiles bridge Firedancer networking into Agave's execution engine</span>
           </div>
           <div class="ft-folder" style="margin-top: var(--space-2);">
             <span class="ft-name">discof/</span>
-            <span class="ft-desc">完整版 Firedancer：这些 tile 完全取代 Agave——从头到尾纯 C 实现</span>
+            <span class="ft-desc">Full Firedancer: these tiles fully replace Agave — pure C from end to end</span>
           </div>
         </div>
       </section>
 
       <!-- ===================== SCREEN 5: GROUP CHAT ===================== -->
       <section class="screen animate-in">
-        <h2 class="screen-heading">群聊：一笔交易进入流水线</h2>
+        <h2 class="screen-heading">Group chat: a transaction enters the pipeline</h2>
         <p>
-          观察一批原始
-          <span class="term" data-definition="QUIC 是一种基于 UDP 的现代网络传输协议，专为速度而生。与 TCP 不同，QUIC 可以同时处理多个数据流而不产生队头阻塞。Solana 使用 QUIC 从客户端接收交易。">QUIC</span>
-          数据包如何流经 tile 流水线——从网线上的原始字节到可执行区块，全程不超过 200ms。
+          Watch a batch of raw
+          <span class="term" data-definition="QUIC is a modern network transport protocol built on UDP, designed for speed. Unlike TCP, QUIC handles multiple streams concurrently without head-of-line blocking. Solana uses QUIC to receive transactions from clients.">QUIC</span>
+          packets flow through the tile pipeline — from raw bytes on the wire to an executable block, all in under 200ms.
         </p>
 
         <div class="chat-window animate-in" id="chat-module2">
@@ -294,7 +298,7 @@
               <div class="chat-avatar" style="background: var(--color-actor-1)">N</div>
               <div class="chat-bubble">
                 <span class="chat-sender" style="color: var(--color-actor-1)">nic-tile</span>
-                <p>从 NIC 收到 12,000 个原始 QUIC 数据包，正在解码 UDP……</p>
+                <p>Received 12,000 raw QUIC packets from NIC, decoding UDP…</p>
               </div>
             </div>
 
@@ -302,7 +306,7 @@
               <div class="chat-avatar" style="background: var(--color-actor-1)">N</div>
               <div class="chat-bubble">
                 <span class="chat-sender" style="color: var(--color-actor-1)">nic-tile</span>
-                <p>提取出 9,400 笔有效交易。正在写入 dcache，更新 mcache 环……</p>
+                <p>Extracted 9,400 valid transactions. Writing to dcache, updating mcache ring…</p>
               </div>
             </div>
 
@@ -310,9 +314,9 @@
               <div class="chat-avatar" style="background: var(--color-actor-2)">S</div>
               <div class="chat-bubble">
                 <span class="chat-sender" style="color: var(--color-actor-2)">sigverify-tile</span>
-                <p>已收到 mcache 条目。正在从 dcache 加载交易字节，校验
-                  <span class="term" data-definition="ed25519 是一种椭圆曲线数字签名算法。每笔 Solana 交易都由发送方的私钥签名。验证签名可以在不暴露私钥的前提下，证明发送方已授权该笔交易。">ed25519</span>
-                  签名……</p>
+                <p>Received mcache entries. Loading transaction bytes from dcache, verifying
+                  <span class="term" data-definition="ed25519 is an elliptic-curve digital signature algorithm. Every Solana transaction is signed by the sender's private key. Verifying the signature proves the sender authorized the transaction without exposing the private key.">ed25519</span>
+                  signatures…</p>
               </div>
             </div>
 
@@ -320,8 +324,8 @@
               <div class="chat-avatar" style="background: var(--color-actor-2)">S</div>
               <div class="chat-bubble">
                 <span class="chat-sender" style="color: var(--color-actor-2)">sigverify-tile</span>
-                <p>9,388 笔有效，12 笔被拒绝（签名无效）。为每笔有效交易打上 64 位指纹，准备交给
-                  <span class="term" data-definition="Dedup（去重）是检测并丢弃重复交易的过程。在高流量网络中，同一笔交易常由多个中继节点重复转发——dedup 确保每笔交易只被处理一次。">dedup</span>。</p>
+                <p>9,388 valid, 12 rejected (invalid signatures). Stamping each valid one with a 64-bit fingerprint, ready for
+                  <span class="term" data-definition="Dedup (deduplication) is the process of detecting and dropping duplicate transactions. In a high-traffic network, the same transaction is often forwarded by multiple relays — dedup ensures it's processed exactly once.">dedup</span>.</p>
               </div>
             </div>
 
@@ -329,7 +333,7 @@
               <div class="chat-avatar" style="background: var(--color-actor-3)">D</div>
               <div class="chat-bubble">
                 <span class="chat-sender" style="color: var(--color-actor-3)">dedup-tile</span>
-                <p>正在对比近期缓存中的指纹。9,340 笔是新交易，48 笔为重复交易——已丢弃。</p>
+                <p>Comparing fingerprints against the recent cache. 9,340 are new, 48 are duplicates — dropped.</p>
               </div>
             </div>
 
@@ -337,7 +341,7 @@
               <div class="chat-avatar" style="background: var(--color-actor-3)">D</div>
               <div class="chat-bubble">
                 <span class="chat-sender" style="color: var(--color-actor-3)">dedup-tile</span>
-                <p>9,340 笔已验证、去重的交易就绪，正在将元数据传递给 Pack。</p>
+                <p>9,340 verified, deduplicated transactions ready. Passing metadata to Pack.</p>
               </div>
             </div>
 
@@ -345,7 +349,7 @@
               <div class="chat-avatar" style="background: var(--color-actor-4)">P</div>
               <div class="chat-bubble">
                 <span class="chat-sender" style="color: var(--color-actor-4)">pack-tile</span>
-                <p>按手续费优先级排序，检查账户冲突，筛选最优的 2,400 笔进入区块……</p>
+                <p>Sorting by fee priority, checking account conflicts, picking the top 2,400 for the block…</p>
               </div>
             </div>
 
@@ -353,7 +357,7 @@
               <div class="chat-avatar" style="background: var(--color-actor-4)">P</div>
               <div class="chat-bubble">
                 <span class="chat-sender" style="color: var(--color-actor-4)">pack-tile</span>
-                <p>区块在 180ms 内准备完毕，已移交执行层。下一个区块窗口将在 220ms 后开启。</p>
+                <p>Block ready in 180ms, handed off to execution. Next block window opens in 220ms.</p>
               </div>
             </div>
 
@@ -369,9 +373,9 @@
           </div>
 
           <div class="chat-controls">
-            <button class="btn chat-next-btn">下一条消息</button>
-            <button class="btn chat-all-btn">全部播放</button>
-            <button class="btn chat-reset-btn">重新播放</button>
+            <button class="btn chat-next-btn">Next message</button>
+            <button class="btn chat-all-btn">Play all</button>
+            <button class="btn chat-reset-btn">Replay</button>
             <span class="chat-progress"></span>
           </div>
         </div>
@@ -379,33 +383,33 @@
 
       <!-- ===================== SCREEN 6: QUIZ ===================== -->
       <section class="screen animate-in">
-        <h2 class="screen-heading">检验你的理解</h2>
-        <p>三道题，考察 Firedancer tile 架构、Tango IPC 以及 Frankendancer 的权衡取舍。</p>
+        <h2 class="screen-heading">Check your understanding</h2>
+        <p>Three questions on the Firedancer tile architecture, Tango IPC, and the Frankendancer trade-offs.</p>
 
         <div class="quiz-container animate-in" id="quiz-module2">
 
           <!-- Q1 -->
           <div class="quiz-question-block"
                data-correct="option-b"
-               data-explanation-right="完全正确——tile 支持横向扩展。每个 NIC tile 处理固定吞吐量。增加更多 NIC tile（和核心），即可成倍提升入口容量。这与在超市增加更多结账通道是同一个逻辑。"
-               data-explanation-wrong="tile 的设计目标是横向扩展，而非纵向提升。单个核心跑得更快固然有帮助，但该架构的核心理念是通过增加更多 tile 来实现更多并行工作。">
+               data-explanation-right="Exactly right — tiles scale horizontally. Each NIC tile handles a fixed throughput. Add more NIC tiles (and cores) and your ingress capacity multiplies. Same logic as adding more checkout lanes at a supermarket."
+               data-explanation-wrong="Tiles are designed to scale horizontally, not vertically. A faster single core helps, but the architecture's core idea is more parallel work via more tiles.">
             <h3 class="quiz-question">
-              一个 Firedancer
-              <span class="term" data-definition="validator 是参与 Solana 共识的服务器，负责处理交易并对正确的链状态进行投票。">validator</span>
-              需要处理 3 倍的入站交易量。基于 tile 架构，最直接的扩展方式是什么？
+              A Firedancer
+              <span class="term" data-definition="A validator is a server participating in Solana consensus — processing transactions and voting on the correct chain state.">validator</span>
+              needs to handle 3x the inbound transaction volume. Based on the tile architecture, what's the most direct way to scale?
             </h3>
             <div class="quiz-options">
               <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>升级到更快的单个 CPU 核心</span>
+                <span>Upgrade to a faster single CPU core</span>
               </button>
               <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>增加更多 NIC tile——每个占用一个独立 CPU 核心</span>
+                <span>Add more NIC tiles — each pinned to its own CPU core</span>
               </button>
               <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>增大环形缓冲区的容量</span>
+                <span>Increase the ring buffer capacity</span>
               </button>
             </div>
             <div class="quiz-feedback"></div>
@@ -414,25 +418,25 @@
           <!-- Q2 -->
           <div class="quiz-question-block"
                data-correct="option-c"
-               data-explanation-right="正确——ballet/ 是 Firedancer 从零实现密码学算法的地方，包括 ed25519 签名验证。数学层面的 bug 会在这里出现。"
-               data-explanation-wrong="tango/ 负责 tile 间通信，funk/ 负责账户存储。签名算法本身位于 ballet/。">
+               data-explanation-right="Correct — ballet/ is where Firedancer implements cryptography from scratch, including ed25519 signature verification. Bugs in the math live here."
+               data-explanation-wrong="tango/ handles inter-tile communication; funk/ handles account storage. The signature algorithm itself lives in ballet/.">
             <h3 class="quiz-question">
-              你发现了一个 bug：部分
-              <span class="term" data-definition="ed25519 是 Solana 用于验证交易发送方身份的椭圆曲线数字签名算法。">ed25519</span>
-              签名被错误拒绝。你应该排查 Firedancer 的哪个源码目录？
+              You found a bug: some
+              <span class="term" data-definition="ed25519 is the elliptic-curve digital signature algorithm Solana uses to verify the sender's identity on each transaction.">ed25519</span>
+              signatures are being incorrectly rejected. Which Firedancer source directory should you investigate?
             </h3>
             <div class="quiz-options">
               <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>tango/ — IPC 消息层</span>
+                <span>tango/ — the IPC messaging layer</span>
               </button>
               <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>funk/ — 账户数据库</span>
+                <span>funk/ — the account database</span>
               </button>
               <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>ballet/ — 密码学实现</span>
+                <span>ballet/ — the cryptography implementations</span>
               </button>
             </div>
             <div class="quiz-feedback"></div>
@@ -441,32 +445,32 @@
           <!-- Q3 -->
           <div class="quiz-question-block"
                data-correct="option-b"
-               data-explanation-right="正确。从零实现的价值在于独立性——如果 Agave 存在 bug，Firedancer 不受影响。但 Frankendancer 仍使用 Agave 的执行引擎（discoh tile 桥接至其上），因此 Agave 执行层的 bug 可能同时影响两者。完整版 Firedancer 彻底消除了这一问题。"
-               data-explanation-wrong="速度不是问题所在——Frankendancer 的网络层已经更快。它也确实已经上线主网。核心限制在于它尚未完全脱离 Agave 的依赖。">
+               data-explanation-right="Right. The value of a from-scratch implementation is independence — if Agave has a bug, Firedancer isn't affected. But Frankendancer still uses Agave's execution engine (discoh tiles bridge into it), so a bug in Agave's execution layer can affect both. Full Firedancer eliminates this entirely."
+               data-explanation-wrong="Speed isn't the issue — Frankendancer's networking is already faster. And it does already run on mainnet. The key limitation is that it isn't fully independent of Agave.">
             <h3 class="quiz-question">
-              Frankendancer 使用
-              <span class="term" data-definition="Agave 是原始 Solana validator 客户端，由 Solana Labs 用 Rust 编写，是主网上部署最广泛的 validator 客户端。">Agave</span>
-              来执行交易。与完整版 Firedancer 相比，主要的权衡取舍是什么？
+              Frankendancer uses
+              <span class="term" data-definition="Agave is the original Solana validator client, written in Rust by Solana Labs, and the most widely deployed validator client on mainnet.">Agave</span>
+              to execute transactions. What's the main trade-off compared to full Firedancer?
             </h3>
             <div class="quiz-options">
               <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>Frankendancer 因使用 Rust 执行而速度更慢</span>
+                <span>Frankendancer is slower because execution runs in Rust</span>
               </button>
               <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>Frankendancer 并非完全独立——它与 Agave 共享执行代码</span>
+                <span>Frankendancer isn't fully independent — it shares execution code with Agave</span>
               </button>
               <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>Frankendancer 无法在主网上运行</span>
+                <span>Frankendancer can't run on mainnet</span>
               </button>
             </div>
             <div class="quiz-feedback"></div>
           </div>
 
-          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module2')">检查答案</button>
-          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module2')">重新作答</button>
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module2')">Check answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module2')">Try again</button>
         </div>
       </section>
 

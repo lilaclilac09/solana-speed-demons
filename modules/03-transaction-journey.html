@@ -2,8 +2,8 @@
   <div class="module-content">
     <header class="module-header animate-in">
       <span class="module-number">03</span>
-      <h1 class="module-title">交易的旅程：400毫秒内发生了什么</h1>
-      <p class="module-subtitle">从你的钱包点击到区块链最终确认 —— 400毫秒内经过六个检查点</p>
+      <h1 class="module-title">A Transaction's Journey: What Happens in 400 Milliseconds</h1>
+      <p class="module-subtitle">From the click in your wallet to final on-chain confirmation — six checkpoints, in 400 ms</p>
     </header>
 
     <div class="module-body">
@@ -12,86 +12,85 @@
            SCREEN 1 — 400 Milliseconds
       ════════════════════════════════════════════════════════════ -->
       <section class="screen animate-in">
-        <h2 class="screen-heading">400毫秒</h2>
+        <h2 class="screen-heading">400 milliseconds</h2>
 
         <p class="screen-lead">
-          你在 Jupiter 上点击兑换。在接下来的 400 毫秒内，你的交易在
-          <span class="term" data-definition="Firedancer 是 Jump Trading 用 C 语言对 Solana validator 客户端的高性能重写版本。它采用基于 tile 的零拷贝流水线架构，设计目标是每秒处理数十万笔交易。">Firedancer</span>
-          validator 内部经过六个独立检查点，随后被永久提交到 Solana 区块链。
+          You hit "swap" on Jupiter. In the next 400 milliseconds your transaction passes through six independent checkpoints inside a
+          <span class="term" data-definition="Firedancer is Jump Trading's high-performance C-language rewrite of the Solana validator client. Tile-based zero-copy pipeline architecture, designed for hundreds of thousands of transactions per second.">Firedancer</span>
+          validator, and then gets committed permanently to the Solana blockchain.
         </p>
 
         <p>
-          400毫秒大约是打一个响指所需的时间。在这个窗口内，一个 validator 接收数千笔交易，对每一个签名进行密码学验证，检查重复项，为
-          <span class="term" data-definition="区块（block）是永久写入 Solana 账本的一批交易。每个区块对应一个 slot —— 即指定 leader validator 产出区块的约 400 毫秒窗口。">区块</span>
-          选出最优组合，执行每个程序，并将结果写入
-          <span class="term" data-definition="支持分叉（fork-aware）意味着数据库可以同时保存多个相互竞争的区块链历史版本（分叉），并在 validator 就规范链达成共识后在它们之间切换。">支持分叉</span>
-          的数据库。
+          400 milliseconds is about the time it takes to snap your fingers. In that window, a validator receives thousands of transactions, cryptographically verifies every signature, checks for duplicates, picks the best mix for the
+          <span class="term" data-definition="A block is the batch of transactions permanently written to the Solana ledger. Each block corresponds to a slot — the ~400ms window during which a designated leader validator produces it.">block</span>,
+          executes each program, and writes results into a
+          <span class="term" data-definition="Fork-aware means the database can hold multiple competing versions of blockchain history (forks) simultaneously, and switch between them once validators agree on the canonical chain.">fork-aware</span>
+          database.
         </p>
 
         <div class="step-cards animate-in">
           <div class="step-card">
             <div class="step-num">1</div>
             <div class="step-body">
-              <strong>QUIC 接入</strong>
-              <p>原始
-                <span class="term" data-definition="UDP（用户数据报协议）是一种轻量级网络协议，发送数据包时不保证送达顺序，类似寄明信片。QUIC 在 UDP 之上添加了可靠性和多路复用能力。">UDP</span>
-                数据包通过
-                <span class="term" data-definition="QUIC 是建立在 UDP 之上的现代网络协议，增加了可靠性、加密和多路复用。Solana 使用 QUIC，使 validator 能够处理大量并发连接而不被单个垃圾发送方压垮。">QUIC</span>
-                从网络到达。NIC tile 将其解码为交易。
+              <strong>QUIC ingress</strong>
+              <p>Raw
+                <span class="term" data-definition="UDP (User Datagram Protocol) is a lightweight network protocol that sends packets with no guarantee of delivery or order — like mailing postcards. QUIC adds reliability and multiplexing on top of UDP.">UDP</span>
+                packets arrive over
+                <span class="term" data-definition="QUIC is a modern network protocol built on UDP that adds reliability, encryption, and multiplexing. Solana uses QUIC so validators can handle huge numbers of concurrent connections without being crushed by a single spammy sender.">QUIC</span>
+                from the network. The NIC tile decodes them into transactions.
               </p>
             </div>
           </div>
           <div class="step-card">
             <div class="step-num">2</div>
             <div class="step-body">
-              <strong>签名验证</strong>
-              <p>每笔交易的
-                <span class="term" data-definition="ed25519 签名是一种密码学证明，证明该交易已由钱包私钥授权。即使拥有无限算力，若不知道私钥也无法伪造该签名。">ed25519 签名</span>
-                都会被检验。签名无效的交易将被静默丢弃。
+              <strong>Signature verification</strong>
+              <p>Every transaction's
+                <span class="term" data-definition="An ed25519 signature is a cryptographic proof that this transaction was authorized by the wallet's private key. Even with infinite compute, you can't forge one without the private key.">ed25519 signature</span>
+                is checked. Transactions with invalid signatures are silently dropped.
               </p>
             </div>
           </div>
           <div class="step-card">
             <div class="step-num">3</div>
             <div class="step-body">
-              <strong>Dedup 去重</strong>
-              <p>64 位指纹用于识别
-                <span class="term" data-definition="Dedup（去重）是指检测并丢弃重复提交的交易。钱包经常会重发未确认的交易 —— dedup tile 确保只有第一份副本进入流水线。">重复</span>
-                提交。只有第一份副本才能继续传递。
+              <strong>Dedup</strong>
+              <p>64-bit fingerprints identify
+                <span class="term" data-definition="Dedup (deduplication) is detecting and dropping duplicated submissions of the same transaction. Wallets often retransmit unconfirmed transactions — the dedup tile makes sure only the first copy flows through the pipeline.">duplicate</span>
+                submissions. Only the first copy continues.
               </p>
             </div>
           </div>
           <div class="step-card">
             <div class="step-num">4</div>
             <div class="step-body">
-              <strong>区块打包</strong>
-              <p>交易按
-                <span class="term" data-definition="优先费（priority fee）是用户支付的可选额外费用，以便在低费用交易之前被选中。Pack tile 利用这些费用来最大化区块收益。">优先费</span>
-                排名。Pack tile 为下一个区块选出最优的 2400 笔交易。
+              <strong>Block packing</strong>
+              <p>Transactions are ranked by
+                <span class="term" data-definition="Priority fee is an optional extra fee a user pays to get picked ahead of low-fee transactions. The Pack tile uses these fees to maximize revenue per block.">priority fee</span>.
+                The Pack tile picks the top ~2,400 transactions for the next block.
               </p>
             </div>
           </div>
           <div class="step-card">
             <div class="step-num">5</div>
             <div class="step-body">
-              <strong>SVM 执行</strong>
-              <p>
-                <span class="term" data-definition="SVM（Solana 虚拟机）是执行链上程序的运行时环境。它追踪每条指令消耗的"计算单元"数量，并强制执行严格的单笔交易限额。">SVM（Solana 虚拟机）</span>
-                运行每个程序。
-                <span class="term" data-definition="计算单元（CU）是 Solana 衡量计算工作量的单位。每条指令都要消耗 CU。交易设定了最大 CU 预算 —— 若超出，执行将中止并回滚所有更改。">计算单元</span>
-                被追踪并强制执行。
+              <strong>SVM execution</strong>
+              <p>The
+                <span class="term" data-definition="The SVM (Solana Virtual Machine) is the runtime that executes on-chain programs. It tracks the 'compute units' consumed by each instruction and enforces a strict per-transaction limit.">SVM (Solana Virtual Machine)</span>
+                runs each program.
+                <span class="term" data-definition="A compute unit (CU) is Solana's measure of computational work. Every instruction costs CUs. Transactions set a maximum CU budget — exceeding it halts execution and rolls back all changes.">Compute units</span>
+                are tracked and enforced.
               </p>
             </div>
           </div>
           <div class="step-card">
             <div class="step-num">6</div>
             <div class="step-body">
-              <strong>共识提交</strong>
-              <p>
-                <span class="term" data-definition="区块（block）是永久写入 Solana 账本的一批交易。每个区块对应一个 slot —— 即指定 leader validator 产出区块的约 400 毫秒窗口。">区块</span>
-                被分发给其他 validator。一旦 2/3 以上的节点达成共识，区块即被
-                <span class="term" data-definition="最终确认（finalized）意味着该区块已获得超过三分之二权益加权 validator 的确认。此时交易不可逆转 —— 在任何情况下都无法回滚。">最终确认</span>
-                。
+              <strong>Consensus commit</strong>
+              <p>The
+                <span class="term" data-definition="A block is the batch of transactions permanently written to the Solana ledger. Each block corresponds to a slot — the ~400ms window during which a designated leader validator produces it.">block</span>
+                is distributed to other validators. Once 2/3+ of nodes reach consensus, the block is
+                <span class="term" data-definition="Finalized means the block has been confirmed by more than two-thirds of stake-weighted validators. At that point, the transactions are irreversible — they cannot be rolled back under any circumstances.">finalized</span>.
               </p>
             </div>
           </div>
@@ -102,22 +101,22 @@
            SCREEN 2 — Flow Animation
       ════════════════════════════════════════════════════════════ -->
       <section class="screen animate-in">
-        <h2 class="screen-heading">观察交易的流转过程</h2>
-        <p>逐步跟踪完整流水线中的每个检查点。观察数据包在各 tile 之间的传递 —— 每个 tile 是一个专用 CPU 线程，只负责一项任务。</p>
+        <h2 class="screen-heading">Watch a transaction flow through</h2>
+        <p>Step through each checkpoint in the full pipeline. Watch the packet hop from tile to tile — each tile is a dedicated CPU thread doing one job.</p>
 
         <div class="flow-animation animate-in" data-steps="[
-          {&quot;highlight&quot;:&quot;flow-actor-1&quot;,&quot;label&quot;:&quot;第 1 步：你的交易以原始 UDP 数据包的形式通过 QUIC 协议到达&quot;},
-          {&quot;highlight&quot;:&quot;flow-actor-1&quot;,&quot;label&quot;:&quot;第 2 步：NIC tile 提取并验证数据包格式&quot;},
-          {&quot;highlight&quot;:&quot;flow-actor-2&quot;,&quot;label&quot;:&quot;第 3 步：ed25519 签名已对照你的钱包公钥完成验证&quot;,&quot;packet&quot;:true,&quot;from&quot;:&quot;actor-1&quot;,&quot;to&quot;:&quot;actor-2&quot;},
-          {&quot;highlight&quot;:&quot;flow-actor-3&quot;,&quot;label&quot;:&quot;第 4 步：64 位指纹检查完毕 —— 首次出现，非重复交易&quot;,&quot;packet&quot;:true,&quot;from&quot;:&quot;actor-2&quot;,&quot;to&quot;:&quot;actor-3&quot;},
-          {&quot;highlight&quot;:&quot;flow-actor-4&quot;,&quot;label&quot;:&quot;第 5 步：按优先费排名，你支付的费用足够 —— 已选入本区块&quot;,&quot;packet&quot;:true,&quot;from&quot;:&quot;actor-3&quot;,&quot;to&quot;:&quot;actor-4&quot;},
-          {&quot;highlight&quot;:&quot;flow-actor-5&quot;,&quot;label&quot;:&quot;第 6 步：SVM 执行程序，账户已更新，状态：Ok(())&quot;,&quot;packet&quot;:true,&quot;from&quot;:&quot;actor-4&quot;,&quot;to&quot;:&quot;actor-5&quot;},
-          {&quot;highlight&quot;:&quot;flow-actor-5&quot;,&quot;label&quot;:&quot;第 7 步：区块已分发至各 validator，已确认，你的兑换已最终完成&quot;}
+          {&quot;highlight&quot;:&quot;flow-actor-1&quot;,&quot;label&quot;:&quot;Step 1: your transaction arrives as raw UDP packets over QUIC&quot;},
+          {&quot;highlight&quot;:&quot;flow-actor-1&quot;,&quot;label&quot;:&quot;Step 2: the NIC tile extracts and validates packet format&quot;},
+          {&quot;highlight&quot;:&quot;flow-actor-2&quot;,&quot;label&quot;:&quot;Step 3: ed25519 signature verified against your wallet's public key&quot;,&quot;packet&quot;:true,&quot;from&quot;:&quot;actor-1&quot;,&quot;to&quot;:&quot;actor-2&quot;},
+          {&quot;highlight&quot;:&quot;flow-actor-3&quot;,&quot;label&quot;:&quot;Step 4: 64-bit fingerprint checked — first seen, not a duplicate&quot;,&quot;packet&quot;:true,&quot;from&quot;:&quot;actor-2&quot;,&quot;to&quot;:&quot;actor-3&quot;},
+          {&quot;highlight&quot;:&quot;flow-actor-4&quot;,&quot;label&quot;:&quot;Step 5: ranked by priority fee, your fee was high enough — selected for the block&quot;,&quot;packet&quot;:true,&quot;from&quot;:&quot;actor-3&quot;,&quot;to&quot;:&quot;actor-4&quot;},
+          {&quot;highlight&quot;:&quot;flow-actor-5&quot;,&quot;label&quot;:&quot;Step 6: SVM executes the program, accounts updated, status: Ok(())&quot;,&quot;packet&quot;:true,&quot;from&quot;:&quot;actor-4&quot;,&quot;to&quot;:&quot;actor-5&quot;},
+          {&quot;highlight&quot;:&quot;flow-actor-5&quot;,&quot;label&quot;:&quot;Step 7: block distributed to validators, confirmed, your swap is finalized&quot;}
         ]">
           <div class="flow-actors">
             <div class="flow-actor" id="flow-actor-1">
               <div class="flow-actor-icon">📡</div>
-              <span>QUIC 接入</span>
+              <span>QUIC Ingest</span>
             </div>
             <div class="flow-actor" id="flow-actor-2">
               <div class="flow-actor-icon">✅</div>
@@ -139,11 +138,11 @@
 
           <div class="flow-packet" id="flow-packet"></div>
 
-          <div class="flow-step-label" id="flow-label">点击"下一步"跟随你的交易穿越流水线</div>
+          <div class="flow-step-label" id="flow-label">Click "Next" to follow your transaction through the pipeline</div>
 
           <div class="flow-controls">
-            <button class="btn flow-next-btn">下一步</button>
-            <button class="btn flow-reset-btn">重新开始</button>
+            <button class="btn flow-next-btn">Next</button>
+            <button class="btn flow-reset-btn">Restart</button>
             <span class="flow-progress"></span>
           </div>
         </div>
@@ -153,10 +152,10 @@
            SCREEN 3 — What the SVM Needs
       ════════════════════════════════════════════════════════════ -->
       <section class="screen animate-in">
-        <h2 class="screen-heading">SVM 需要什么</h2>
-        <p>在
-          <span class="term" data-definition="SVM（Solana 虚拟机）是执行链上程序的运行时环境。它追踪每条指令消耗的计算单元数量，并强制执行严格的单笔交易限额。">SVM</span>
-          能够执行哪怕一条指令之前，它必须加载一份完整的区块链状态快照。这段来自 Firedancer 测试框架的代码，展示了该快照所包含的确切内容。
+        <h2 class="screen-heading">What the SVM needs</h2>
+        <p>Before the
+          <span class="term" data-definition="The SVM (Solana Virtual Machine) is the runtime that executes on-chain programs. It tracks the compute units consumed by each instruction and enforces a strict per-transaction limit.">SVM</span>
+          can execute a single instruction, it has to load a complete snapshot of the blockchain state. This snippet, from the Firedancer test framework, shows exactly what that snapshot contains.
         </p>
 
         <div class="translation-block animate-in">
@@ -186,22 +185,22 @@
             </code></pre>
           </div>
           <div class="translation-english">
-            <span class="translation-label">通俗解释</span>
+            <span class="translation-label">In plain English</span>
             <div class="translation-lines">
-              <p class="tl">创建一个空的内存"bank" —— 即 SVM 将要读取的 Solana 区块链状态模拟环境。</p>
-              <p class="tl">对于交易将涉及的每个账户：将其当前余额、所有者程序和存储数据加载到 bank 中。
-                <span class="term" data-definition="公钥（public key）是你的钱包地址 —— 区块链上任何人都可见的唯一标识符。只有对应的私钥才能授权该地址发出的交易。">公钥</span>
-                用作查找索引。
+              <p class="tl">Create an empty in-memory "bank" — the simulated Solana blockchain state the SVM will read from.</p>
+              <p class="tl">For every account the transaction will touch: load its current balance, owner program, and stored data into the bank. The
+                <span class="term" data-definition="A public key is your wallet's address — a unique identifier visible to anyone on the blockchain. Only the matching private key can authorize transactions from that address.">public key</span>
+                is used as the lookup index.
               </p>
-              <p class="tl">加载所有 Solana 系统变量（
-                <span class="term" data-definition="Sysvar 是特殊的内置 Solana 账户，存储全局网络状态：当前租金价格、epoch 信息、最近区块哈希等。程序读取 sysvar 以正确定价和验证操作。">sysvars</span>
-                ）：当前租金价格、epoch 信息、最近
-                <span class="term" data-definition="区块哈希（blockhash）是最近一个区块的密码学指纹。交易必须包含一个最近的区块哈希以防止重放攻击 —— validator 会拒绝区块哈希超过约 2 分钟的交易。">区块哈希</span>
-                —— 以及运行时所需的
-                <span class="term" data-definition="lamports 是 SOL（Solana 原生代币）的最小单位。1 SOL = 10 亿 lamports —— 类似比特币的聪。">lamports</span>
-                和所有权元数据。
+              <p class="tl">Load every Solana system variable (
+                <span class="term" data-definition="A sysvar is a special built-in Solana account that stores global network state: current rent prices, epoch info, recent blockhashes. Programs read sysvars to correctly price and validate operations.">sysvars</span>
+                ): current rent price, epoch info, recent
+                <span class="term" data-definition="A blockhash is the cryptographic fingerprint of a recent block. Transactions must include a recent blockhash to prevent replay attacks — validators reject transactions whose blockhash is more than ~2 minutes old.">blockhash</span>
+                — along with the
+                <span class="term" data-definition="Lamports are the smallest unit of SOL (Solana's native token). 1 SOL = 1 billion lamports — like satoshis on Bitcoin.">lamports</span>
+                and ownership metadata the runtime requires.
               </p>
-              <p class="tl">返回填充完毕的 bank。SVM 现在拥有执行本笔交易所需的完整状态快照。</p>
+              <p class="tl">Return the populated bank. The SVM now has the complete state snapshot it needs to execute this transaction.</p>
             </div>
           </div>
         </div>
@@ -209,8 +208,8 @@
         <div class="callout callout-info animate-in">
           <div class="callout-icon">💡</div>
           <div class="callout-content">
-            <strong class="callout-title">零拷贝架构</strong>
-            <p>在生产环境的 Firedancer 中，各 tile 之间从不复制交易数据。NIC tile 将交易字节一次性写入共享内存区域（dcache）。每个下游 tile 通过指针从同一内存位置读取数据。正因如此，Firedancer 能够每秒处理数十万笔交易 —— 内存带宽绝不浪费在数据复制上。</p>
+            <strong class="callout-title">Zero-copy architecture</strong>
+            <p>In production Firedancer, tiles never copy transaction data between each other. The NIC tile writes transaction bytes once into a shared memory region (dcache). Every downstream tile reads from that same memory through pointers. That's how Firedancer hits hundreds of thousands of transactions per second — no memory bandwidth wasted on data copies.</p>
           </div>
         </div>
       </section>
@@ -219,39 +218,40 @@
            SCREEN 4 — What Kills a Transaction
       ════════════════════════════════════════════════════════════ -->
       <section class="screen animate-in">
-        <h2 class="screen-heading">什么会导致交易失败</h2>
+        <h2 class="screen-heading">What kills a transaction</h2>
         <p>
-          大多数失败的交易不会产生你所看到的错误 —— 它们只是从未到达目的地。了解是哪个检查点终止了交易，是调试的关键所在。
+          Most failed transactions don't produce the error you'd expect — they simply never arrive. Knowing which checkpoint killed yours is the key to debugging.
         </p>
 
         <div class="badge-list animate-in">
           <div class="badge-item">
             <code class="badge-code" style="background: var(--color-actor-1); color: white;">QUIC Ingest</code>
-            <span class="badge-desc">数据包格式错误、网络格式不符，或该 validator 的 IP 被封锁。交易从未突破网络层。</span>
+            <span class="badge-desc">Packet malformed, wrong network format, or this validator's IP is blocking yours. The transaction never made it past the network layer.</span>
           </div>
           <div class="badge-item">
             <code class="badge-code" style="background: var(--color-actor-2); color: white;">SigVerify</code>
             <span class="badge-desc">
-              <span class="term" data-definition="ed25519 签名是一种密码学证明，证明该交易已由钱包私钥授权。若不知道私钥，无论拥有多强的算力都无法伪造。">ed25519 签名</span>
-              无效 —— 交易已损坏或使用了错误的密钥签名。立即丢弃，不收取手续费。
+              The
+              <span class="term" data-definition="An ed25519 signature is a cryptographic proof that this transaction was authorized by the wallet's private key. You can't forge one without the private key, no matter how much compute you have.">ed25519 signature</span>
+              is invalid — the transaction was corrupted or signed with the wrong key. Dropped immediately, no fee charged.
             </span>
           </div>
           <div class="badge-item">
             <code class="badge-code" style="background: var(--color-actor-3); color: white;">Dedup</code>
-            <span class="badge-desc">这笔完全相同的交易已被见过 —— 是 validator 在数毫秒前已处理（或丢弃）的某笔交易的重发。钱包会不断重发；大多数重发都在此处被静默丢弃。</span>
+            <span class="badge-desc">This exact transaction has been seen before — it's a retry of one the validator already processed (or dropped) milliseconds earlier. Wallets retransmit constantly; most retries get silently dropped here.</span>
           </div>
           <div class="badge-item">
             <code class="badge-code" style="background: var(--color-actor-4); color: white;">Pack</code>
-            <span class="badge-desc">
-              <span class="term" data-definition="slot 是约 400 毫秒的窗口，期间一个指定的 leader validator 产出一个区块。每个 slot 在标准计算限额下可容纳约 2400 笔交易。">slot</span>
-              已满，或你的手续费太低 —— 该交易未被选入本次区块 slot。它可能在下一个 slot 中被重试。
+            <span class="badge-desc">The
+              <span class="term" data-definition="A slot is the ~400ms window during which a designated leader validator produces one block. Each slot fits about 2,400 transactions under the standard compute limit.">slot</span>
+              is full or your fee is too low — the transaction didn't make the cut for this block slot. It may get retried in the next slot.
             </span>
           </div>
           <div class="badge-item">
             <code class="badge-code" style="background: var(--color-actor-5); color: white;">Execute</code>
-            <span class="badge-desc">程序耗尽了
-              <span class="term" data-definition="计算单元（CU）是 Solana 衡量计算工作量的单位。每条指令都要消耗 CU。交易设定了最大 CU 预算 —— 若超出，执行将中止并回滚所有更改。">计算单元</span>
-              ，触及账户余额限制，或返回了错误代码。所有状态更改被回滚，但手续费仍然收取。
+            <span class="badge-desc">The program ran out of
+              <span class="term" data-definition="A compute unit (CU) is Solana's measure of computational work. Every instruction costs CUs. Transactions set a maximum CU budget — exceeding it halts execution and rolls back all changes.">compute units</span>,
+              hit an account-balance limit, or returned an error code. All state changes are rolled back, but the fee is still charged.
             </span>
           </div>
         </div>
@@ -261,29 +261,29 @@
            SCREEN 5 — Quiz
       ════════════════════════════════════════════════════════════ -->
       <section class="screen animate-in">
-        <h2 class="screen-heading">检验你的理解</h2>
-        <p>三个场景 —— 运用你所学的交易流水线知识。</p>
+        <h2 class="screen-heading">Check your understanding</h2>
+        <p>Three scenarios — apply what you've learned about the transaction pipeline.</p>
 
         <div class="quiz-container animate-in" id="quiz-module3">
 
           <!-- Question 1 -->
           <div class="quiz-question-block"
                data-correct="option-b"
-               data-explanation-right="正确 —— &quot;消失&quot;的交易往往是在 Dedup 检查点被拦截。钱包通常会重发未确认的交易，但如果 validator 已经处理（或丢弃）了第一份副本，后续重发都会被静默去重。"
-               data-explanation-wrong="连接中断意味着交易从未到达 validator。Pack 拒绝在技术上是执行前的失败。静默消失最常见的原因指向 Dedup。">
-            <h3 class="quiz-question">一位用户说他的交易"就这么消失了 —— 既没有确认也没有失败提示"。根据流水线检查点，最可能的解释是什么？</h3>
+               data-explanation-right="Right — &quot;disappearing&quot; transactions are usually killed at the Dedup checkpoint. Wallets retransmit unconfirmed transactions, but if the validator has already processed (or dropped) the first copy, every retry gets silently deduplicated."
+               data-explanation-wrong="A dropped connection means the transaction never reached the validator at all. A Pack rejection is technically pre-execution failure. The most common cause of silent disappearance is Dedup.">
+            <h3 class="quiz-question">A user says their transaction "just disappeared — no confirmation, no failure". Based on the pipeline checkpoints, what's the most likely explanation?</h3>
             <div class="quiz-options">
               <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>用户的网络连接在广播前中断</span>
+                <span>The user's network dropped before broadcast</span>
               </button>
               <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>交易被去重 —— validator 看到的是它已处理过的某笔交易的重发</span>
+                <span>The transaction got deduped — the validator saw it as a retransmission of one it had already processed</span>
               </button>
               <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>Pack tile 因程序错误拒绝了该交易</span>
+                <span>The Pack tile rejected it because of a program error</span>
               </button>
             </div>
             <div class="quiz-feedback"></div>
@@ -292,21 +292,21 @@
           <!-- Question 2 -->
           <div class="quiz-question-block"
                data-correct="option-b"
-               data-explanation-right="完全正确 —— SVM 在执行过程中强制执行计算单元预算。当达到上限时，执行中止，该交易的所有账户状态更改均被回滚。交易手续费仍然收取。"
-               data-explanation-wrong="SVM 不会扩展预算或允许溢出。Pack 也无法提前知道一笔交易会使用多少 CU —— 这只有在执行期间才会明朗。">
-            <h3 class="quiz-question">一笔交易使用了 104,291 个计算单元，但其 ComputeBudget 限额设为 100,000。会发生什么？</h3>
+               data-explanation-right="Exactly — the SVM enforces the compute-unit budget during execution. When the limit is hit, execution halts and every account state change in that transaction is rolled back. The fee is still charged."
+               data-explanation-wrong="The SVM doesn't extend the budget or allow overruns. And Pack can't know in advance how many CUs a transaction will use — that only becomes clear at execution time.">
+            <h3 class="quiz-question">A transaction uses 104,291 compute units, but its ComputeBudget limit is set to 100,000. What happens?</h3>
             <div class="quiz-options">
               <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>交易成功，但多出的计算量由用户免费使用</span>
+                <span>The transaction succeeds, and the extra compute is given to the user for free</span>
               </button>
               <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>交易执行到上限后被回滚 —— 所有账户更改被撤销</span>
+                <span>Execution runs up to the limit and is rolled back — all account changes are undone</span>
               </button>
               <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>Pack tile 检测到这一情况，在执行前拒绝了该交易</span>
+                <span>The Pack tile detects this and rejects the transaction before execution</span>
               </button>
             </div>
             <div class="quiz-feedback"></div>
@@ -315,28 +315,28 @@
           <!-- Question 3 -->
           <div class="quiz-question-block"
                data-correct="option-b"
-               data-explanation-right="正确 —— Solana 允许同一个区块中有多笔交易涉及同一账户，但 Pack tile 必须对该账户的这些交易进行串行化处理（逐一执行）。涉及不同账户的交易则可以并行执行。"
-               data-explanation-wrong="Solana 区块中确实可以包含多笔涉及同一账户的交易 —— 只是这些交易不能对该账户并行执行。不存在按区块的账户锁定机制。">
-            <h3 class="quiz-question">两笔交易都想修改同一个代币账户。它们能同时出现在同一个区块中吗？</h3>
+               data-explanation-right="Right — Solana allows multiple transactions touching the same account in one block, but the Pack tile must serialize them (execute them one after another) for that account. Transactions touching different accounts can execute in parallel."
+               data-explanation-wrong="Solana blocks can absolutely include multiple transactions on the same account — they just can't execute in parallel on it. There's no per-block account-locking mechanism.">
+            <h3 class="quiz-question">Two transactions both want to modify the same token account. Can they appear in the same block?</h3>
             <div class="quiz-options">
               <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>不能 —— 涉及同一账户的交易永远不能出现在同一个区块中</span>
+                <span>No — transactions touching the same account can never share a block</span>
               </button>
               <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>可以，但 Pack 必须对该账户的这些交易进行串行排序</span>
+                <span>Yes, but Pack has to serialize them in order on that account</span>
               </button>
               <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
                 <div class="quiz-option-radio"></div>
-                <span>可以，且它们能并行执行，因为每笔交易都有自己的账户副本</span>
+                <span>Yes, and they can execute in parallel because each transaction has its own copy of the account</span>
               </button>
             </div>
             <div class="quiz-feedback"></div>
           </div>
 
-          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module3')">检查答案</button>
-          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module3')">再试一次</button>
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module3')">Check answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module3')">Try again</button>
         </div>
       </section>
 
