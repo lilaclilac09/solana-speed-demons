@@ -1,5 +1,7 @@
 # Solana Speed Demons
 
+Status: LOCAL ONLY — static educational course, not a verified production deployment; next human action: review the [acceptance audit](notes/acceptance-audit-2026-11-22.md) and attached mobile walkthrough before choosing a static hosting target.
+
 An interactive single-page course on **Solana validator internals at wire speed** — how Firedancer, Samba, Delorean, and pmm-sim each carve a different optimization out of the 400ms slot. Self-contained HTML, no framework.
 
 Seven modules, from a top-down view of the validator all the way down to dissecting a private AMM:
